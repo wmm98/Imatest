@@ -101,7 +101,7 @@ class CSVTestData(Interface):
         readable_num = len([i for i in readable_relate if i >= 8])
 
         # 获取对比度
-        contrast = "{:.2f}".format(((zone_data[0] - zone_data[-1]) / 255))
+        contrast = float("{:.4f}".format(((zone_data[0] - zone_data[-1]) / 255)))
         return {conf.hj_readable: readable_num, conf.hj_contrast: contrast}
 
     def get_hj_dynamic_range_data(self, data):

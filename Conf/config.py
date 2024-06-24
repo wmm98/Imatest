@@ -7,6 +7,7 @@ class Config:
     f_name = "F.csv"
     hj_name = "HJ.csv"
     template_name = "Template.xlsx"
+    sheet_name = "测试指标汇总"
 
     f_data_path = os.path.join(project_path, "TestData", "F", f_name)
     hj_data_path = os.path.join(project_path, "TestData", "HJ", hj_name)
