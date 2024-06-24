@@ -18,5 +18,6 @@ class Config:
     r_noise = "R-noise%"
     g_noise = "R-noise%"
     b_noise = "B-noise%"
+    snr_bw = "SNR_BW"
 
 
