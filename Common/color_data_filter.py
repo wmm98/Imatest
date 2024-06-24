@@ -48,9 +48,9 @@ class CSVTestData(Interface):
         # 转为float列表
         err_array = balance_err_array.tolist()
         float_err_array = [[float(j) for j in i] for i in err_array]
-        # 返回平均数，即为RGBY
-        RGBY = [ sum(e_a) / len(e_a) for e_a in float_err_array]
-        return {}
+        # 返回平均数，即为RGBY,取小数点后两位 "{:.2f}".format()
+        RGBY = [float("{:.2f}".format((sum(e_a) / len(e_a)))) for e_a in float_err_array]
+        return {"R": RGBY[0], "G": RGBY[1], "B": RGBY[2], "Y": RGBY[3]}
 
     def get_snr_data(self, data):
         for row in data:
