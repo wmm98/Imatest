@@ -1,4 +1,3 @@
-import csv
 from Conf.config import Config
 from Common.interface import Interface
 import numpy as np
