@@ -135,6 +135,12 @@ class Ui_MainWindow(object):
         self.submit_button = QtWidgets.QPushButton("开始生成报告")
         self.verticalLayout.addWidget(self.submit_button)
 
+        self.tips = QtWidgets.QLabel()
+        self.tips.setStyleSheet("color: red;")
+        self.tips.setText("未开始生成报告...")
+        # self.tips.setVisible(False)
+        self.verticalLayout.addWidget(self.tips)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
