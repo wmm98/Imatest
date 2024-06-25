@@ -2,15 +2,25 @@ import os
 
 
 class Config:
-    project_path = os.path.dirname(os.getcwd())
+    project_path = os.getcwd()
 
-    f_name = "F.csv"
     hj_name = "HJ.csv"
+    f_name = "F.csv"
+    cwf_name = "CWF.csv"
+    d65_name = "D65.csv"
+    tl83_name = "TL83.csv"
+    tl84_name = "TL84.csv"
+    mix_name = "Mix.csv"
     template_name = "Template.xlsx"
     sheet_name = "指标数据"
 
-    f_data_path = os.path.join(project_path, "TestData", "F", f_name)
     hj_data_path = os.path.join(project_path, "TestData", "HJ", hj_name)
+    f_data_path = os.path.join(project_path, "TestData", "F", f_name)
+    cwf_data_path = os.path.join(project_path, "TestData", "CWF", cwf_name)
+    d65_data_path = os.path.join(project_path, "TestData", "D65", d65_name)
+    tl83_data_path = os.path.join(project_path, "TestData", "TL83", tl83_name)
+    tl84_data_path = os.path.join(project_path, "TestData", "TL84", tl84_name)
+    mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
     template_path = os.path.join(project_path, "ReportTemplate", template_name)
 
     # 色彩专业名词
