@@ -2,8 +2,11 @@ from openpyxl import load_workbook
 from openpyxl.styles import Font
 from Conf.config import Config
 from Common.interface import Interface
+from Common.color_data_filter import CSVTestData
+from Common.get_report_position import GetReportPosition
 
 conf = Config()
+report_position = GetReportPosition(conf.template_path, conf.sheet_name)
 
 
 class WriteReport(Interface):
@@ -109,13 +112,54 @@ class WriteReport(Interface):
         wb.save(self.file_path)
         wb.close()
 
+    def write_hj_data(self):
+        # 灰阶测试
+        csv = CSVTestData(conf.hj_data_path)
+        hj_data = csv.get_hj_relate_data(csv.read_csv_to_matrix())
+
+        dr_key_pos = report_position.find_scenario_position_by_keyword(conf.r_dynamic_range)
+        dr_pos = report_position.get_hj_relate_position(dr_key_pos)
+        self.write_dynamic_range_data(dr_pos, hj_data)
+
+        contrast_key_pos = report_position.find_scenario_position_by_keyword(conf.r_contrast_test)
+        contrast_pos = report_position.get_hj_relate_position(contrast_key_pos)
+        self.write_contrast_data(contrast_pos, hj_data)
+
+        readable_key_pos = report_position.find_scenario_position_by_keyword(conf.r_readable_hj_num)
+        readable_pos = report_position.get_hj_relate_position(readable_key_pos)
+        self.write_readable_hj_data(readable_pos, hj_data)
+
+    def write_scenario_data(self, light_data_path, scenario):
+
+        # color check
+        csv = CSVTestData(light_data_path)
+        data = csv.read_csv_to_matrix()
+        # snr
+        key_position = report_position.find_scenario_position_by_keyword(scenario)
+        snr_data = csv.get_snr_data(data)
+        snr_position = report_position.get_snr_position(key_position)
+        self.write_snr_data(snr_position, snr_data)
+        # 白平衡
+        white_balance_data = csv.get_white_balance_err_data(data)
+        white_balance_position = report_position.get_white_balance_position(key_position)
+        self.write_white_balance_data(white_balance_position, white_balance_data)
+        # 噪点测试
+        noise_data = csv.get_rgby_noise_data(data)
+        noise_position = report_position.get_rgby_noise_position(key_position)
+        self.write_rgby_noise_data(noise_position, noise_data)
+        # 颜色偏差 / 饱和度测试
+        saturation_data = csv.get_color_accuracy_data(data)
+        saturation_position = report_position.get_color_accuracy_position(key_position)
+        self.write_color_accuracy_data(saturation_position, saturation_data)
+
 
 if __name__ == '__main__':
-    from Common.color_data_filter import CSVTestData
-    from Common.get_report_position import GetReportPosition
-
     w_r = WriteReport(conf.template_path, conf.sheet_name)
-    report_position = GetReportPosition(conf.template_path, conf.sheet_name)
+    w_r.write_scenario_data(conf.f_data_path, conf.r_F_light)
+    w_r.write_hj_data()
+
+    # w_r = WriteReport(conf.template_path, conf.sheet_name)
+    # report_position = GetReportPosition(conf.template_path, conf.sheet_name)
 
     # 灰阶测试
     # csv = CSVTestData(conf.hj_data_path)
@@ -141,27 +185,23 @@ if __name__ == '__main__':
     # print(readable_pos)
     # w_r.write_readable_hj_data(readable_pos, hj_data)
 
-    # color check
-    csv = CSVTestData(conf.f_data_path)
-    data = csv.read_csv_to_matrix()
-    # snr
-    f_key_position = report_position.find_scenario_position_by_keyword(conf.r_F_light)
-    snr_data = csv.get_snr_data(data)
-    snr_position = report_position.get_snr_position(f_key_position)
-    w_r.write_snr_data(snr_position, snr_data)
-    # 白平衡
-    white_balance_data = csv.get_white_balance_err_data(data)
-    white_balance_position = report_position.get_white_balance_position(f_key_position)
-    w_r.write_white_balance_data(white_balance_position, white_balance_data)
-    # 噪点测试
-    noise_data = csv.get_rgby_noise_data(data)
-    noise_position = report_position.get_rgby_noise_position(f_key_position)
-    w_r.write_rgby_noise_data(noise_position, noise_data)
-    # 颜色偏差 / 饱和度测试
-    saturation_data = csv.get_color_accuracy_data(data)
-    saturation_position = report_position.get_color_accuracy_position(f_key_position)
-    w_r.write_color_accuracy_data(saturation_position, saturation_data)
-
-
-
-
+    # # color check
+    # csv = CSVTestData(conf.f_data_path)
+    # data = csv.read_csv_to_matrix()
+    # # snr
+    # f_key_position = report_position.find_scenario_position_by_keyword(conf.r_F_light)
+    # snr_data = csv.get_snr_data(data)
+    # snr_position = report_position.get_snr_position(f_key_position)
+    # w_r.write_snr_data(snr_position, snr_data)
+    # # 白平衡
+    # white_balance_data = csv.get_white_balance_err_data(data)
+    # white_balance_position = report_position.get_white_balance_position(f_key_position)
+    # w_r.write_white_balance_data(white_balance_position, white_balance_data)
+    # # 噪点测试
+    # noise_data = csv.get_rgby_noise_data(data)
+    # noise_position = report_position.get_rgby_noise_position(f_key_position)
+    # w_r.write_rgby_noise_data(noise_position, noise_data)
+    # # 颜色偏差 / 饱和度测试
+    # saturation_data = csv.get_color_accuracy_data(data)
+    # saturation_position = report_position.get_color_accuracy_position(f_key_position)
+    # w_r.write_color_accuracy_data(saturation_position, saturation_data)
