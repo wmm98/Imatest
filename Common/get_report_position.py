@@ -52,6 +52,14 @@ class GetReportPosition(Interface):
         y_position = [scenario_position[0] + 14, column]
         return {conf.R: r_position, conf.G: g_position, conf.B: b_position, conf.Y: y_position}
 
+    def get_color_accuracy_position(self, scenario_position):
+        column = scenario_position[1] + 1
+        e1_position = [scenario_position[0] + 15, column]
+        c1_position = [scenario_position[0] + 16, column]
+        c2_position = [scenario_position[0] + 17, column]
+        sat_position = [scenario_position[0] + 18, column]
+        return {conf.E1: e1_position, conf.C1: c1_position, conf.C2: c2_position, conf.Sat: sat_position}
+
 
 if __name__ == '__main__':
     from Common.color_data_filter import CSVTestData

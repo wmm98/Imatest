@@ -59,7 +59,7 @@ class CSVTestData(Interface):
             if self.remove_space(conf.snr_bw) in line[0]:
                 return {conf.R: float(line[1]), conf.G: float(line[2]), conf.B: float(line[3]), conf.Y: float(line[4])}
 
-    def get_color_accuracy_data(self):
+    def get_color_accuracy_data(self, data):
         accuracy_data = {}
         flag = 0
         for row in data:
