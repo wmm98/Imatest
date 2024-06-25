@@ -23,7 +23,6 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
     def intiui(self):
         pass
 
-
         # self.low_ver_apk_upload_button.clicked.connect(self.low_apk_upload_file)
         # self.high_ver_apk_upload_button.clicked.connect(self.high_apk_upload_file)
         # self.config_package_button.clicked.connect(self.config_package_upload)
@@ -40,81 +39,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
     def get_message_box(self, text):
         QMessageBox.warning(self, "错误提示", text)
 
-    def checkDeviceOnline(self):
-        if self.checkbox_serial.isChecked():
-            device_name = self.edit_device_name_COM.text()
-        else:
-            device_name = self.edit_device_name.currentText()
-        if len(device_name) == 0:
-            self.get_message_box("设备名称为空，输入设备名称")
-            return
-
-        # 需要串口的情况
-        if self.checkbox_serial.isChecked():
-            # pass
-            COM_name = self.COM_name.currentText()
-            if COM_name.strip() in self.serial.get_current_COM():
-                self.serial.loginSer(COM_name)
-                if self.serial.check_usb_adb_connect_serial(device_name):
-                    current_firmware_version = self.serial.invoke(
-                        "adb -s %s shell getprop ro.product.version" % device_name)
-                    self.device_state_tips.setText("设备当前的版本：%s" % self.serial.remove_space(current_firmware_version))
-                    self.device_state_tips.setVisible(True)
-                else:
-                    self.device_state_tips.setText("设备%s不在线， 请再次测试！！！" % device_name)
-                    self.device_state_tips.setVisible(True)
-                self.serial.confirm_relay_closed()
-                self.serial.logoutSer()
-            else:
-                self.get_message_box("没有可用的串口，请检查！！！")
-        else:
-            # 不需要串口的情况下
-            if self.serial.check_usb_adb_connect_no_serial(device_name):
-                current_firmware_version = self.serial.invoke(
-                    "adb -s %s shell getprop ro.product.version" % self.edit_device_name.currentText())
-                self.device_state_tips.setText(
-                    "设备当前的版本：%s" % self.serial.remove_space(current_firmware_version))
-                self.device_state_tips.setVisible(True)
-            else:
-                self.device_state_tips.setText("设备%s不在线， 请再次测试！！！" % device_name)
-                self.device_state_tips.setVisible(True)
-
     def handle_submit(self):
-
-        # 获取文本框中的文本内容
-        tree_status = []
-        for i in range(self.treeWidget.topLevelItemCount()):
-            item = self.treeWidget.topLevelItem(i)
-            # print(item)
-            # 2 表示已勾选，0 表示未勾选，1 表示半选中
-            tree_status.append(self.get_tree_item_status(item))
-
-        # 修改yaml 数据的属性值
-        if 'TestCase' not in self.data:
-            self.data["TestCase"] = {}
-
-        for slave in tree_status[0]["children"]:
-            # print(slave)
-            if slave["text"] == '维护测试用例':
-                base_test = "Base_Test"
-                if base_test not in self.data["TestCase"]:
-                    self.data["TestCase"][base_test] = {}
-                i = 0
-                for child in slave['children']:
-                    self.data["TestCase"][base_test]["%s-case%d" % (base_test, i)] = int(child["status"])
-                    i += 1
-            elif slave["text"] == '配置包测试':
-                config_test = "Config_Test"
-                if config_test not in self.data["TestCase"]:
-                    self.data["TestCase"][config_test] = {}
-                i = 0
-                for child in slave['children']:
-                    self.data["TestCase"][config_test]["%s-case%d" % (config_test, i)] = int(child["status"])
-                    i += 1
-
         # 拷贝上传的apk文件并且改变yaml 里字段的值
         package_path = os.path.join(self.project_path, "APK")
-        # work_path = self.project_path + "\\Param\\Work_APP\\"
         low_ver_apk_name = self.low_ver_apk_file_path.text()
         high_ver_apk_name = self.low_ver_apk_file_path.text()
         if self.has_path_symbol(low_ver_apk_name):
@@ -164,77 +91,11 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         # 保存要跑得用例
         self.data["Run_Cases"] = ",".join(testcases)
 
-        # 检测到有勾选到配置包测试再执行
-        if "Config_Test-case" in self.data["Run_Cases"]:
-            # 拷贝上传的向导包并且改变yaml 里字段的值
-            config_path = os.path.join(self.project_path, "ConfigPackage")
-            # 解压的路径
-            expectConfigResultPath = os.path.join(self.project_path, "ExpectTestResult", "ConfigPackageRelate",
-                                                  "ExpectResult")
-            original_config_package_path = self.config_package_path.text()
-            if original_config_package_path:
-                if self.has_path_symbol(original_config_package_path):
-                    config_package_name = os.path.basename(original_config_package_path)
-                    self.data['DeviceTestData']['config_package'] = config_package_name
-                    # 复制，解压
-                    print("原来的路径为： %s" % original_config_package_path)
-                    print("复制后的路径为： %s" % os.path.join(config_path, config_package_name))
-                    self.copy_file(original_config_package_path, os.path.join(config_path, config_package_name),
-                                   over_write=True)
-                else:
-                    config_package_name = original_config_package_path.strip()
-                # 解压
-                # 先清空里面的文件文件夹，再解压， 保持文件夹干净
-                for i in os.listdir(expectConfigResultPath):
-                    self.remove_file_directory(os.path.join(expectConfigResultPath, i))
-                self.unzip(os.path.join(config_path, config_package_name), expectConfigResultPath)
-
-        # 需要测试的数据：General_Test - case0, General_Test - case4, General_Test - case5, General_Test - case6
         # 保存修改后的内容回 YAML 文件
         with open(self.yaml_file_path, 'w') as file:
             yaml.safe_dump(self.data, file)
         self.close()
         subprocess.run([os.path.join(self.project_path, "run.bat")])
-
-    # 获取所有节点的状态
-    def get_tree_item_status(self, tree_item):
-        status = tree_item.checkState(0)
-        if status == 2:
-            self.cases_selected_sum += 1
-        result = {
-            "text": tree_item.text(0),
-            "status": status,
-            "children": []
-        }
-        # 我添加的
-        for i in range(tree_item.childCount()):
-            child_item = tree_item.child(i)
-            # print(child_item.text())
-            # print(self.get_tree_item_status(child_item))
-            result["children"].append(self.get_tree_item_status(child_item))
-        return result
-
-    def handle_selection_changed(self):
-        tree_status = []
-        for i in range(self.treeWidget.topLevelItemCount()):
-            item = self.treeWidget.topLevelItem(i)
-            tree_status.append(self.get_tree_item_status(item))
-
-    def handlechanged(self, item, column):
-        # 获取选中节点的子节点个数
-        count = item.childCount()
-        # 如果被选中
-        if item.checkState(column) == Qt.Checked:
-            # 连同下面子子节点全部设置为选中状态
-            for f in range(count):
-                if item.child(f).checkState(0) != Qt.Checked:
-                    item.child(f).setCheckState(0, Qt.Checked)
-        # 如果取消选中
-        if item.checkState(column) == Qt.Unchecked:
-            # 连同下面子子节点全部设置为取消选中状态
-            for f in range(count):
-                if item.child(f).checkState != Qt.Unchecked:
-                    item.child(f).setCheckState(0, Qt.Unchecked)
 
     def copy_file(self, origin, des, over_write=False):
         if self.path_is_existed(origin):
@@ -265,10 +126,6 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             shutil.rmtree(path)
         elif os.path.isfile(path):
             os.remove(path)
-
-    def has_path_symbol(self, input_string):
-        pattern = r'[\\/]'
-        return bool(re.search(pattern, input_string))
 
     def path_is_existed(self, path):
         if os.path.exists(path):
@@ -309,29 +166,6 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         devices = [device_str.split("\t")[0] for device_str in devices_info if device_str.split("\t")[1] == "device"]
         for device in devices:
             self.edit_device_name.addItem(str(device))
-
-    def onSerialCheckboxStateChanged(self, state):
-        if state == 2:  # 选中状态
-            self.COM_name.setEnabled(True)
-            self.edit_device_name_COM.setEnabled(True)
-            self.edit_device_name.setDisabled(True)
-            ports = self.serial.get_current_COM()
-            for port in ports:
-                self.COM_name.addItem(port)
-            if len(ports) == 0:
-                self.err_COM_Tips.setText("没有可用的COM口, 请检查！！！")
-                self.err_COM_Tips.setVisible(True)
-                self.COM_name.setEnabled(True)
-            elif len(ports) == 1:
-                pass
-            else:
-                self.err_COM_Tips.setText("当前多个COM可用, 请选择需测试COM口！！！")
-                self.err_COM_Tips.setVisible(True)
-        else:
-            self.edit_device_name_COM.setDisabled(True)
-            self.edit_device_name.setEnabled(True)
-            self.err_COM_Tips.setVisible(False)
-            self.COM_name.setDisabled(True)
 
     def CheckCOMBoxTextChange(self, text):
         if self.COM_name.isEnabled():

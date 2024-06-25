@@ -12,7 +12,7 @@ class Ui_MainWindow(object):
 
     yaml_file_path = os.path.join(project_path, "Conf", "test_data.yaml")
     # 加载 YAML 文件
-    with open(yaml_file_path, 'r+', encoding="utf-8") as file:
+    with open(yaml_file_path, 'r', encoding="utf-8") as file:
         data = yaml.safe_load(file)
 
     def setupUi(self, MainWindow):
