@@ -18,6 +18,14 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.intiui()
         self.camera_param = 0
+        self.final_report_name = ""
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.check_report)
+
+        self.check_interval = 1000  # 定时器间隔，单位毫秒
+        self.timeout_limit = 20 * 1000  # 超时限制，单位毫秒, 10秒超时
+        self.elapsed_time = 0  # 已经过的时间
 
     def intiui(self):
         self.group.buttonClicked[int].connect(self.on_check_box_clicked)
@@ -117,9 +125,40 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
                 return
             else:
                 self.deal_csv_file("Mix", Mix_file_path)
+
+        # 删除已存在的报告
+
+        if self.path_is_existed(self.final_report_name):
+            self.remove_file(self.final_report_name)
+
+        # 显示报告正在生成中
+        self.tips.setText("正在生成报告,请等待.....")
+
         # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
         thread = threading.Thread(target=self.run_process)
         thread.start()
+
+        # 检测报告的生成
+        self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告.csv" % (self.data["CameraData"]["camera_product"],
+                                                                        self.data["CameraData"]["project_name"],
+                                                                        int(self.data["CameraData"]["pixels"]))
+        self.timer.start(self.check_interval)  # 启动定时器
+        # self.timer.timeout.connect(self.check_report)
+
+    def check_report(self):
+        path = os.path.join(self.project_path, self.final_report_name)  # 要检查的路径
+        if os.path.exists(path):
+            self.tips.setText("报告已经生成:  %s" % self.final_report_name)
+            self.timer.stop()  # 如果报告存在，停止定时器
+        else:
+            self.elapsed_time += self.check_interval
+            if self.elapsed_time >= self.timeout_limit:
+                self.tips.setText("生成报告失败,请再次生成")
+                self.timer.stop()  # 如果超时，停止定时器
+
+    def closeEvent(self, event):
+        self.timer.stop()  # 在窗口关闭时停止定时器
+        event.accept()
 
     def run_process(self):
         subprocess.run([os.path.join(self.project_path, "Run", "run.bat")])

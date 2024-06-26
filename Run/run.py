@@ -32,14 +32,7 @@ if __name__ == '__main__':
     # 灰阶测试数据
     if data["CameraData"]["is_hj_test"]:
         w_r.write_hj_data()
-    # F光
-    print(data["CameraData"]["is_hj_test"])
-    print(data["CameraData"]["is_f_test"])
-    print(data["CameraData"]["is_cwf_test"])
-    print(data["CameraData"]["is_d65_test"])
-    print(data["CameraData"]["is_tl83_test"])
-    print(data["CameraData"]["is_mix_test"])
-
+    # F
     if data["CameraData"]["is_f_test"]:
         w_r.write_scenario_data(conf.f_data_path, conf.r_F_light)
     # cwf
