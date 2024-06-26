@@ -60,6 +60,10 @@ class GetReportPosition(Interface):
         sat_position = [scenario_position[0] + 18, column]
         return {conf.E1: e1_position, conf.C1: c1_position, conf.C2: c2_position, conf.Sat: sat_position}
 
+    def get_test_project_position(self, key_word):
+        key_position = self.find_scenario_position_by_keyword(key_word)
+        return [key_position[0], key_position[1] + 1]
+
 
 if __name__ == '__main__':
     from Common.color_data_filter import CSVTestData

@@ -78,3 +78,6 @@ class Config:
     r_contrast_test = "对比度"
     r_readable_hj_num = "可读灰阶数"
     r_dynamic_range = "Dynamic Range"
+
+    r_test_project = "测试项目"
+

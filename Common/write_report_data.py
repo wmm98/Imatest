@@ -14,13 +14,16 @@ class WriteReport(Interface):
         self.file_path = file_path
         self.sheet_name = sheet_name
         self.red_font = Font(color="FF0000")
+        self.camera_pixels = 0
 
     def write_contrast_data(self, position, value):
         wb = load_workbook(self.file_path)
         sheet = wb[self.sheet_name]
         pos = position[conf.r_hj_relate_pos]
         contrast_cell = sheet.cell(row=pos[0], column=pos[1])
-        contrast_cell.value = value[conf.hj_contrast]
+        contrast_cell.value = "%s%%" % str(value[conf.hj_contrast] * 100)
+
+        self.comparative_contrast_indicator(contrast_cell, value[conf.hj_contrast])
         wb.save(self.file_path)
         wb.close()
 
@@ -28,8 +31,10 @@ class WriteReport(Interface):
         wb = load_workbook(self.file_path)
         sheet = wb[self.sheet_name]
         pos = position[conf.r_hj_relate_pos]
-        contrast_cell = sheet.cell(row=pos[0], column=pos[1])
-        contrast_cell.value = value[conf.hj_readable]
+        readable_cell = sheet.cell(row=pos[0], column=pos[1])
+        readable_cell.value = value[conf.hj_readable]
+
+        self.comparative_readable_hj_indicator(readable_cell, value[conf.hj_readable])
         wb.save(self.file_path)
         wb.close()
 
@@ -40,8 +45,8 @@ class WriteReport(Interface):
         pos = position[conf.r_hj_relate_pos]
         dynamic_range_cell = sheet.cell(row=pos[0], column=pos[1])
         dynamic_range_cell.value = value[conf.hj_dynamic_range]
-        # if dynamic_range <= 5.5:
-        #     dynamic_range_cell.font = red_font
+
+        self.comparative_dynamic_range_indicator(dynamic_range_cell, value[conf.hj_dynamic_range])
         wb.save(self.file_path)
         wb.close()
 
@@ -57,6 +62,8 @@ class WriteReport(Interface):
         b_cell.value = "B：%s" % str(value[conf.B])
         y_cell = sheet.cell(row=position[conf.Y][0], column=position[conf.Y][1])
         y_cell.value = "Y：%s" % str(value[conf.Y])
+
+        self.comparative_snr_indicator([[r_cell, value[conf.R]], [g_cell, value[conf.G]], [b_cell, value[conf.B]], [y_cell, value[conf.Y]]])
 
         wb.save(self.file_path)
         wb.close()
@@ -130,7 +137,6 @@ class WriteReport(Interface):
         self.write_readable_hj_data(readable_pos, hj_data)
 
     def write_scenario_data(self, light_data_path, scenario):
-
         # color check
         csv = CSVTestData(light_data_path)
         data = csv.read_csv_to_matrix()
@@ -152,6 +158,41 @@ class WriteReport(Interface):
         saturation_position = report_position.get_color_accuracy_position(key_position)
         self.write_color_accuracy_data(saturation_position, saturation_data)
 
+    def write_project_name(self, camera_data):
+        wb = load_workbook(self.file_path)
+        sheet = wb[self.sheet_name]
+        position = report_position.get_test_project_position(conf.r_test_project)
+        r_cell = sheet.cell(row=position[0], column=position[1])
+        r_cell.value = "%s-%s万摄像头(%s)" % (
+        camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"])
+        wb.save(self.file_path)
+        wb.close()
+
+    def comparative_contrast_indicator(self, cell, value):
+        if value <= 0.75:
+            cell.font = self.red_font
+
+    def comparative_readable_hj_indicator(self, cell, value):
+        if value < 19:
+            cell.font = self.red_font
+
+    def comparative_dynamic_range_indicator(self, cell, value):
+        if value <= 5.5:
+            cell.font = self.red_font
+
+    def comparative_snr_indicator(self, cells):
+        # l = [["cell", 0], ["cell", 0]]
+        for cell in cells:
+            if cell[1] <= 35:
+                cell[0].font = self.red_font
+
+    def comparative_white_balance_indicator(self, cells, value):
+        for cell in cells:
+            if value <= 35:
+                cell.font = self.red_font
+
+
+
 
 if __name__ == '__main__':
     w_r = WriteReport(conf.template_path, conf.sheet_name)
@@ -162,10 +203,10 @@ if __name__ == '__main__':
     # report_position = GetReportPosition(conf.template_path, conf.sheet_name)
 
     # 灰阶测试
-    # csv = CSVTestData(conf.hj_data_path)
-    # hj_data = csv.get_hj_relate_data(csv.read_csv_to_matrix())
-    # print(hj_data)
-    #
+    csv = CSVTestData(conf.hj_data_path)
+    hj_data = csv.get_hj_relate_data(csv.read_csv_to_matrix())
+    print(hj_data)
+
     #
     # dr_key_pos = report_position.find_scenario_position_by_keyword(conf.r_dynamic_range)
     # print(dr_key_pos)

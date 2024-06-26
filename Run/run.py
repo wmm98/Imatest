@@ -17,18 +17,11 @@ if __name__ == '__main__':
     # 加载 YAML 文件
     with open(yaml_file_path, 'r', encoding="utf-8") as file:
         data = yaml.safe_load(file)
-    # data["CameraData"]["pixels"]
-    # data["CameraData"]["project_name"]
-    # data["CameraData"]["camera_product"]
-    # data["CameraData"]["is_f_test"] = "true"
-    # data["CameraData"]["is_d65_test"] = "true"
-    # data["CameraData"]["is_tl84_test"] = "true"
-    # data["CameraData"]["is_tl83_test"] = "true"
-    # data["CameraData"]["is_cwf_test"] = "true"
-    # data["CameraData"]["is_hj_test"] = "true"
-    # data["CameraData"]["is_mix_test"] = "true"
-    #
+
     w_r = WriteReport(conf.template_path, conf.sheet_name)
+    w_r.camera_pixels = data["CameraData"]["pixels"]
+
+    w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"], "camera_product": data["CameraData"]["camera_product"]})
     # 灰阶测试数据
     if data["CameraData"]["is_hj_test"]:
         w_r.write_hj_data()
