@@ -74,40 +74,72 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         # # 保存修改后的内容回 YAML 文件
         with open(self.yaml_file_path, 'w') as file:
             yaml.safe_dump(self.data, file)
-        # self.close()
-        # subprocess.run([os.path.join(self.project_path, "run.bat")])
-        # 拷贝csv文件到相应的目录
-        test_data_path = os.path.join(self.project_path, "TestData")
-        if F_path_length != 0:
-            des_folder = os.path.join(test_data_path, "F")
-            des_file = os.path.join(des_folder, "F.csv")
-            file_copied_path = os.path.join(des_folder, os.path.basename(self.F_file_path))
-            self.remove_file_directory(des_file)
-            self.copy_file(self.F_file_path, des_folder)
-            self.rename_file(file_copied_path, des_file)
-        # package_path = os.path.join(self.project_path, "APK")
-        # low_ver_apk_name = self.low_ver_apk_file_path.text()
-        # high_ver_apk_name = self.low_ver_apk_file_path.text()
-        # if self.has_path_symbol(low_ver_apk_name):
-        #     real_low_ver_apk_name = low_ver_apk_name.split("/")[-1]
-        #     # 修改字段值
-        #     self.data["DeviceTestData"]["apk"]["low_version_app"] = real_low_ver_apk_name
-        #     self.copy_file(low_ver_apk_name, package_path + real_low_ver_apk_name)
-        # if self.has_path_symbol(high_ver_apk_name):
-        #     real_high_ver_apk_name = high_ver_apk_name.split("/")[-1]
-        #     # 修改字段值
-        #     self.data["DeviceTestData"]["apk"]["high_version_app"] = real_high_ver_apk_name
-        #     self.copy_file(high_ver_apk_name, package_path + real_high_ver_apk_name)
 
-    def deal_csv_file(self, light, csv_name, file_path):
+        # 拷贝csv文件到相应的目录
+        if HJ_path_length != 0:
+            HJ_file_path = self.HJ_file_path.text()
+            if not self.check_file_extension_name(HJ_file_path, "灰阶"):
+                return
+            else:
+                self.deal_csv_file("HJ", HJ_file_path)
+        if F_path_length != 0:
+            f_file_path = self.F_file_path.text()
+            if not self.check_file_extension_name(f_file_path, "F"):
+                return
+            else:
+                self.deal_csv_file("F", f_file_path)
+        if D65_path_length != 0:
+            D65_file_path = self.D65_file_path.text()
+            if not self.check_file_extension_name(D65_file_path, "D65"):
+                return
+            else:
+                self.deal_csv_file("D65", D65_file_path)
+            self.deal_csv_file("D65", self.D65_file_path.text())
+        if TL84_path_length != 0:
+            TL84_file_path = self.TL84_file_path.text()
+            if not self.check_file_extension_name(TL84_file_path, "TL84"):
+                return
+            else:
+                self.deal_csv_file("TL84", TL84_file_path)
+        if TL83_path_length != 0:
+            TL83_file_path = self.TL83_file_path.text()
+            if not self.check_file_extension_name(TL83_file_path, "TL83"):
+                return
+            else:
+                self.deal_csv_file("TL83", TL83_file_path)
+        if CWF_path_length != 0:
+            CWF_file_path = self.CWF_file_path.text()
+            if not self.check_file_extension_name(CWF_file_path, "CWF"):
+                return
+            else:
+                self.deal_csv_file("CWF", CWF_file_path)
+        if Mix_path_length != 0:
+            Mix_file_path = self.Mix_file_path.text()
+            if not self.check_file_extension_name(Mix_file_path, "混"):
+                return
+            else:
+                self.deal_csv_file("Mix", Mix_file_path)
+
+        subprocess.run([os.path.join(self.project_path, "run.bat")])
+
+    def check_file_extension_name(self, file_name, light):
+        if ".csv" != os.path.splitext(file_name)[1].strip():
+            self.get_message_box("%s光数据请上传csv格式的数据!!!" % light)
+            return False
+        return True
+
+    def deal_csv_file(self, light, file_path):
+        csv_name = light + os.path.splitext(file_path)[1]
         test_data_path = os.path.join(self.project_path, "TestData")
         des_folder = os.path.join(test_data_path, light)
         des_file = os.path.join(des_folder, csv_name)
         file_copied_path = os.path.join(des_folder, os.path.basename(file_path))
-        self.remove_file_directory(des_file)
+        self.remove_file(des_file)
+        self.remove_file(des_file)
         self.copy_file(file_path, des_folder)
+        if not self.path_is_existed(des_file):
+            self.copy_file(file_path, des_folder)
         self.rename_file(file_copied_path, des_file)
-
 
     def on_check_box_clicked(self, id):
         # 处理复选框点击事件
@@ -123,16 +155,13 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             self.camera_param = 1600
 
     def copy_file(self, origin, des):
-        self.remove_file_directory(des)
         shutil.copy(origin, des)
 
     def rename_file(self, origin, des):
         shutil.move(origin, des)
 
-    def remove_file_directory(self, path):
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        elif os.path.isfile(path):
+    def remove_file(self, path):
+        if os.path.isfile(path):
             os.remove(path)
 
     def path_is_existed(self, path):
