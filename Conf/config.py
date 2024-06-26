@@ -2,8 +2,7 @@ import os
 
 
 class Config:
-    project_path = os.path.dirname(os.getcwd())
-    print(project_path)
+    project_path = os.getcwd()
 
     hj_name = "HJ.csv"
     f_name = "F.csv"

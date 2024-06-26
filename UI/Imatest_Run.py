@@ -24,7 +24,7 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.timer.timeout.connect(self.check_report)
 
         self.check_interval = 1000  # 定时器间隔，单位毫秒
-        self.timeout_limit = 20 * 1000  # 超时限制，单位毫秒, 10秒超时
+        self.timeout_limit = 60 * 1000  # 超时限制，单位毫秒, 10秒超时
         self.elapsed_time = 0  # 已经过的时间
 
     def intiui(self):
@@ -134,6 +134,8 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         # 显示报告正在生成中
         self.tips.setText("正在生成报告,请等待.....")
 
+        print("========================", os.getcwd())
+
         # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
         thread = threading.Thread(target=self.run_process)
         thread.start()
@@ -161,7 +163,8 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         event.accept()
 
     def run_process(self):
-        subprocess.run([os.path.join(self.project_path, "Run", "run.bat")])
+        print(os.getcwd())
+        subprocess.run([os.path.join(self.project_path, "Run", "bat_run.bat")])
 
     def check_file_extension_name(self, file_name, light):
         if ".csv" != os.path.splitext(file_name)[1].strip():

@@ -2,8 +2,8 @@ if __name__ == '__main__':
     import shutil
     import os
     import yaml
-    from Common.write_report_data import WriteReport
     from Conf.config import Config
+    from Common.write_report_data import WriteReport
     conf = Config()
 
     # 复制模板
