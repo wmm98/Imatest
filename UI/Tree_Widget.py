@@ -2,7 +2,7 @@ import os
 import yaml
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel
-from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QLineEdit, QCompleter, QComboBox
+from PyQt5.QtWidgets import QHBoxLayout, QCheckBox, QLineEdit, QCompleter, QComboBox, QButtonGroup
 
 
 class Ui_MainWindow(object):
@@ -43,6 +43,17 @@ class Ui_MainWindow(object):
         # 添加一个拉伸因子以将水平布局放在窗口底部
         layout.addStretch(1)
         # 将水平布局放入垂直布局
+
+        # 创建按钮组并将复选框添加到按钮组中
+        self.group = QButtonGroup()
+        self.group.addButton(self.is_800_camera, id=1)
+        self.group.addButton(self.is_500_camera, id=2)
+        self.group.addButton(self.is_200_camera, id=3)
+        self.group.addButton(self.is_1300_camera, id=4)
+        self.group.addButton(self.is_1600_camera, id=5)
+
+        # 设置按钮组中只能有一个选中
+        self.group.setExclusive(True)
         self.verticalLayout.addLayout(layout)
 
         layout_product = QHBoxLayout()
@@ -57,6 +68,15 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(layout_product)
 
         # color check 数据上传
+        self.color_HJ_info = QtWidgets.QLabel("上传灰阶csv：")
+        self.verticalLayout.addWidget(self.color_HJ_info)
+        layout_HJ_light = QHBoxLayout()
+        self.HJ_file_path = QtWidgets.QLineEdit()
+        layout_HJ_light.addWidget(self.HJ_file_path)
+        self.HJ_data_upload_button = QtWidgets.QPushButton("点击上传")
+        layout_HJ_light.addWidget(self.HJ_data_upload_button)
+        self.verticalLayout.addLayout(layout_HJ_light)
+
         self.color_F_info = QtWidgets.QLabel("上传F光csv：")
         self.verticalLayout.addWidget(self.color_F_info)
         layout_F_light = QHBoxLayout()
@@ -110,15 +130,6 @@ class Ui_MainWindow(object):
         self.Mix_data_upload_button = QtWidgets.QPushButton("点击上传")
         layout_Mix_light.addWidget(self.Mix_data_upload_button)
         self.verticalLayout.addLayout(layout_Mix_light)
-
-        self.color_HJ_info = QtWidgets.QLabel("上传灰阶csv：")
-        self.verticalLayout.addWidget(self.color_HJ_info)
-        layout_HJ_light = QHBoxLayout()
-        self.HJ_file_path = QtWidgets.QLineEdit()
-        layout_HJ_light.addWidget(self.HJ_file_path)
-        self.HJ_data_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_HJ_light.addWidget(self.HJ_data_upload_button)
-        self.verticalLayout.addLayout(layout_HJ_light)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

@@ -1,2 +1,11 @@
 CameraData:
-  pixels: 500
+  camera_product: mm
+  is_cwf_test: 'false'
+  is_d65_test: 'false'
+  is_f_test: 'false'
+  is_hj_test: 'true'
+  is_mix_test: 'false'
+  is_tl83_test: 'false'
+  is_tl84_test: 'false'
+  pixels: 1600
+  project_name: vv
