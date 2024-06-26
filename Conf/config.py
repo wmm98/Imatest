@@ -2,7 +2,8 @@ import os
 
 
 class Config:
-    project_path = os.getcwd()
+    project_path = os.path.dirname(os.getcwd())
+    print(project_path)
 
     hj_name = "HJ.csv"
     f_name = "F.csv"
@@ -21,7 +22,9 @@ class Config:
     tl83_data_path = os.path.join(project_path, "TestData", "TL83", tl83_name)
     tl84_data_path = os.path.join(project_path, "TestData", "TL84", tl84_name)
     mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
-    template_path = os.path.join(project_path, "ReportTemplate", template_name)
+    report_template_base_path = os.path.join(project_path, "ReportTemplate")
+    template_path = os.path.join(report_template_base_path, template_name)
+    origin_template_path = os.path.join(report_template_base_path, "Template", template_name)
 
     # 色彩专业名词
     wb_err_s = "WB ERR S(HSV)"

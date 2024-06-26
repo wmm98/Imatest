@@ -8,9 +8,7 @@ from Tree_Widget import Ui_MainWindow
 import yaml
 import os
 import shutil
-import re
-import time
-import zipfile
+import threading
 
 
 class tree(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -63,13 +61,13 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.data["CameraData"]["pixels"] = self.camera_param
         self.data["CameraData"]["project_name"] = self.project_edit.text()
         self.data["CameraData"]["camera_product"] = self.camera_product_edit.text()
-        self.data["CameraData"]["is_f_test"] = "true" if F_path_length != 0 else "false"
-        self.data["CameraData"]["is_d65_test"] = "true" if D65_path_length != 0 else "false"
-        self.data["CameraData"]["is_tl84_test"] = "true" if TL84_path_length != 0 else "false"
-        self.data["CameraData"]["is_tl83_test"] = "true" if TL83_path_length != 0 else "false"
-        self.data["CameraData"]["is_cwf_test"] = "true" if CWF_path_length != 0 else "false"
-        self.data["CameraData"]["is_hj_test"] = "true" if HJ_path_length != 0 else "false"
-        self.data["CameraData"]["is_mix_test"] = "true" if Mix_path_length != 0 else "false"
+        self.data["CameraData"]["is_f_test"] = True if F_path_length != 0 else False
+        self.data["CameraData"]["is_d65_test"] = True if D65_path_length != 0 else False
+        self.data["CameraData"]["is_tl84_test"] = True if TL84_path_length != 0 else False
+        self.data["CameraData"]["is_tl83_test"] = True if TL83_path_length != 0 else False
+        self.data["CameraData"]["is_cwf_test"] = True if CWF_path_length != 0 else False
+        self.data["CameraData"]["is_hj_test"] = True if HJ_path_length != 0 else False
+        self.data["CameraData"]["is_mix_test"] = True if Mix_path_length != 0 else False
         #
         # # 保存修改后的内容回 YAML 文件
         with open(self.yaml_file_path, 'w') as file:
@@ -119,8 +117,12 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
                 return
             else:
                 self.deal_csv_file("Mix", Mix_file_path)
+        # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
+        thread = threading.Thread(target=self.run_process)
+        thread.start()
 
-        subprocess.run([os.path.join(self.project_path, "run.bat")])
+    def run_process(self):
+        subprocess.run([os.path.join(self.project_path, "Run", "run.bat")])
 
     def check_file_extension_name(self, file_name, light):
         if ".csv" != os.path.splitext(file_name)[1].strip():
