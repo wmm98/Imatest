@@ -42,4 +42,6 @@ if __name__ == '__main__':
     if data["CameraData"]["is_mix_test"]:
         w_r.write_scenario_data(conf.mix_data_path, conf.r_mix_light)
 
+    w_r.fill_camera_with_pixels()
+
     shutil.move(conf.template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

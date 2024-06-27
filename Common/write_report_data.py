@@ -172,7 +172,6 @@ class WriteReport(Interface):
         saturation_data = csv.get_color_accuracy_data(data)
         saturation_position = report_position.get_color_accuracy_position(key_position)
         self.write_color_accuracy_data(saturation_position, saturation_data)
-        self.fill_camera_with_pixels()
 
     def write_project_name(self, camera_data):
         wb = load_workbook(self.file_path)
@@ -242,16 +241,21 @@ class WriteReport(Interface):
     def fill_camera_with_pixels(self):
         wb = load_workbook(self.file_path)
         sheet = wb[self.sheet_name]
-        pixels_position = report_position.get_test_camera_pixels_position("%d万摄像头标准参考值" % self.camera_pixels)
-        print("摄像头参数位置", pixels_position)
-        clo = pixels_position[1]
-        row = pixels_position[0]
-        while True:
-            cell = sheet.cell(row=row + 1, column=clo)
-            # print(cell)
-            if cell.value is None or len(cell.value) == 0:
-                break
-            cell.fill = self.yellow_fill
+        # 摄像头参数位置
+        first_position = report_position.find_scenario_position_by_keyword("%d万摄像头标准参考值" % self.camera_pixels)
+        print("摄像头参数位置", first_position)
+
+        last_key_position = report_position.find_scenario_position_by_keyword(conf.r_camera_p_last_key)
+        print(last_key_position)
+
+        for i in range(first_position[0], last_key_position[0] + 1):
+            cel = sheet.cell(row=i,  column=first_position[1])
+            cel.fill = self.yellow_fill
+        wb.save(self.file_path)
+        wb.close()
+
+
+
 
 
 if __name__ == '__main__':

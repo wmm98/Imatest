@@ -80,4 +80,5 @@ class Config:
     r_dynamic_range = "Dynamic Range"
 
     r_test_project = "测试项目"
+    r_camera_p_last_key = "闪光均匀性(暗边)"
 
