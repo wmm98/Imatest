@@ -15,6 +15,7 @@ class WriteReport(Interface):
         self.sheet_name = sheet_name
         self.red_font = Font(color="FF0000")
         self.camera_pixels = 0
+        self.scenario_light = ""
 
     def write_contrast_data(self, position, value):
         wb = load_workbook(self.file_path)
@@ -63,7 +64,8 @@ class WriteReport(Interface):
         y_cell = sheet.cell(row=position[conf.Y][0], column=position[conf.Y][1])
         y_cell.value = "Y：%s" % str(value[conf.Y])
 
-        self.comparative_snr_indicator([[r_cell, value[conf.R]], [g_cell, value[conf.G]], [b_cell, value[conf.B]], [y_cell, value[conf.Y]]])
+        self.comparative_snr_indicator(
+            [[r_cell, value[conf.R]], [g_cell, value[conf.G]], [b_cell, value[conf.B]], [y_cell, value[conf.Y]]])
 
         wb.save(self.file_path)
         wb.close()
@@ -84,6 +86,11 @@ class WriteReport(Interface):
         twenty_three_cell.value = "%s block： %s" % (conf.twenty_three, str(value[conf.twenty_three]))
         twenty_four_cell = sheet.cell(row=position[conf.twenty_four][0], column=position[conf.twenty_four][1])
         twenty_four_cell.value = "%s block： %s" % (conf.twenty_four, str(value[conf.twenty_four]))
+
+        font_list = [[nineteen_cell, value[conf.nineteen]], [twenty_cell, value[conf.twenty]],
+                     [twenty_one_cell, value[conf.twenty_one]], [twenty_two_cell, value[conf.twenty_two]],
+                     [twenty_three_cell, value[conf.twenty_three]], [twenty_four_cell, value[conf.twenty_four]]]
+        self.comparative_white_balance_indicator(font_list)
         wb.save(self.file_path)
         wb.close()
 
@@ -99,6 +106,9 @@ class WriteReport(Interface):
         b_cell.value = "B：%s%%" % str(value[conf.B])
         y_cell = sheet.cell(row=position[conf.Y][0], column=position[conf.Y][1])
         y_cell.value = "Y：%s%%" % str(value[conf.Y])
+
+        font_list = [[r_cell, value[conf.R]], [g_cell, value[conf.G]], [b_cell, value[conf.B]], [y_cell, value[conf.Y]]]
+        self.comparative_rgby_noise_indicator(font_list)
 
         wb.save(self.file_path)
         wb.close()
@@ -116,6 +126,9 @@ class WriteReport(Interface):
         sat_cell = sheet.cell(row=position[conf.Sat][0], column=position[conf.Sat][1])
         sat_cell.value = "Sat：%s%%" % str(value[conf.Sat])
 
+        font_data = {conf.E1: [e1_cell, value[conf.E1]], conf.C1: [c1_cell, value[conf.C1]],
+                     conf.C2: [c2_cell, value[conf.C2]], conf.Sat: [sat_cell, value[conf.Sat]]}
+        self.comparative_saturation_indicator(font_data)
         wb.save(self.file_path)
         wb.close()
 
@@ -137,6 +150,7 @@ class WriteReport(Interface):
         self.write_readable_hj_data(readable_pos, hj_data)
 
     def write_scenario_data(self, light_data_path, scenario):
+        self.scenario_light = scenario
         # color check
         csv = CSVTestData(light_data_path)
         data = csv.read_csv_to_matrix()
@@ -164,7 +178,7 @@ class WriteReport(Interface):
         position = report_position.get_test_project_position(conf.r_test_project)
         r_cell = sheet.cell(row=position[0], column=position[1])
         r_cell.value = "%s-%s万摄像头(%s)" % (
-        camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"])
+            camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"])
         wb.save(self.file_path)
         wb.close()
 
@@ -186,12 +200,42 @@ class WriteReport(Interface):
             if cell[1] <= 35:
                 cell[0].font = self.red_font
 
-    def comparative_white_balance_indicator(self, cells, value):
+    def comparative_white_balance_indicator(self, cells):
         for cell in cells:
-            if value <= 35:
-                cell.font = self.red_font
+            if self.scenario_light == conf.r_F_light:
+                if cell[1] >= 0.1:
+                    cell[0].font = self.red_font
+            else:
+                if self.camera_pixels == 200:
+                    if cell[1] >= 0.1:
+                        cell[0].font = self.red_font
+                else:
+                    if cell[1] >= 0.08:
+                        cell[0].font = self.red_font
 
+    def comparative_rgby_noise_indicator(self, cells):
+        for cell in cells:
+            if cell[1] >= 1:
+                cell[0].font = self.red_font
 
+    def comparative_saturation_indicator(self, cells):
+        E1_cell = cells[conf.E1][0]
+        E1_value = cells[conf.E1][1]
+        C1_cell = cells[conf.C1][0]
+        C1_value = cells[conf.C1][1]
+        C2_cell = cells[conf.C2][0]
+        C2_value = cells[conf.C2][1]
+        Sat_cell = cells[conf.Sat][0]
+        Sat_value = cells[conf.Sat][1]
+
+        if E1_value >= 10:
+            E1_cell.font = self.red_font
+        if C1_value / 2 >= 10:
+            C1_cell.font = self.red_font
+        if C2_value / 2 >= 10:
+            C2_cell.font = self.red_font
+        if Sat_value < 105 or Sat_value > 120:
+            Sat_cell.font = self.red_font
 
 
 if __name__ == '__main__':
