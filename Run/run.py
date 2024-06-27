@@ -4,6 +4,7 @@ if __name__ == '__main__':
     import yaml
     from Conf.config import Config
     from Common.write_report_data import WriteReport
+
     conf = Config()
 
     # 复制模板
@@ -21,7 +22,8 @@ if __name__ == '__main__':
     w_r = WriteReport(conf.template_path, conf.sheet_name)
     w_r.camera_pixels = data["CameraData"]["pixels"]
 
-    w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"], "camera_product": data["CameraData"]["camera_product"]})
+    w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"],
+                            "camera_product": data["CameraData"]["camera_product"]})
     # 灰阶测试数据
     if data["CameraData"]["is_hj_test"]:
         w_r.write_hj_data()
@@ -40,9 +42,4 @@ if __name__ == '__main__':
     if data["CameraData"]["is_mix_test"]:
         w_r.write_scenario_data(conf.mix_data_path, conf.r_mix_light)
 
-    file_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告.csv" % (data["CameraData"]["camera_product"],
-                                                       data["CameraData"]["project_name"], int(data["CameraData"]["pixels"]))
-    if os.path.exists(file_name):
-        os.remove(file_name)
-
-    shutil.move(conf.template_path, os.path.join(conf.project_path, file_name))
+    shutil.move(conf.template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

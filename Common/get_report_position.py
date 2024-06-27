@@ -64,6 +64,10 @@ class GetReportPosition(Interface):
         key_position = self.find_scenario_position_by_keyword(key_word)
         return [key_position[0], key_position[1] + 1]
 
+    def get_test_camera_pixels_position(self, key_word):
+        key_position = self.find_scenario_position_by_keyword(key_word)
+        return key_position
+
 
 if __name__ == '__main__':
     from Common.color_data_filter import CSVTestData

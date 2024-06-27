@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from openpyxl.styles import Font
+from openpyxl.styles import Font, PatternFill
 from Conf.config import Config
 from Common.interface import Interface
 from Common.color_data_filter import CSVTestData
@@ -16,6 +16,7 @@ class WriteReport(Interface):
         self.red_font = Font(color="FF0000")
         self.camera_pixels = 0
         self.scenario_light = ""
+        self.yellow_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')
 
     def write_contrast_data(self, position, value):
         wb = load_workbook(self.file_path)
@@ -118,11 +119,11 @@ class WriteReport(Interface):
         sheet = wb[self.sheet_name]
 
         e1_cell = sheet.cell(row=position[conf.E1][0], column=position[conf.E1][1])
-        e1_cell.value = "△E1：%s%%" % str(value[conf.E1])
+        e1_cell.value = "△E1：%s" % str(value[conf.E1])
         c1_cell = sheet.cell(row=position[conf.C1][0], column=position[conf.C1][1])
-        c1_cell.value = "△C1：%s%%" % str(value[conf.C1])
+        c1_cell.value = "△C1：%s" % str(value[conf.C1])
         c2_cell = sheet.cell(row=position[conf.C2][0], column=position[conf.C2][1])
-        c2_cell.value = "△C2：%s%%" % str(value[conf.C2])
+        c2_cell.value = "△C2：%s" % str(value[conf.C2])
         sat_cell = sheet.cell(row=position[conf.Sat][0], column=position[conf.Sat][1])
         sat_cell.value = "Sat：%s%%" % str(value[conf.Sat])
 
@@ -171,6 +172,7 @@ class WriteReport(Interface):
         saturation_data = csv.get_color_accuracy_data(data)
         saturation_position = report_position.get_color_accuracy_position(key_position)
         self.write_color_accuracy_data(saturation_position, saturation_data)
+        self.fill_camera_with_pixels()
 
     def write_project_name(self, camera_data):
         wb = load_workbook(self.file_path)
@@ -236,6 +238,20 @@ class WriteReport(Interface):
             C2_cell.font = self.red_font
         if Sat_value < 105 or Sat_value > 120:
             Sat_cell.font = self.red_font
+
+    def fill_camera_with_pixels(self):
+        wb = load_workbook(self.file_path)
+        sheet = wb[self.sheet_name]
+        pixels_position = report_position.get_test_camera_pixels_position("%d万摄像头标准参考值" % self.camera_pixels)
+        print("摄像头参数位置", pixels_position)
+        clo = pixels_position[1]
+        row = pixels_position[0]
+        while True:
+            cell = sheet.cell(row=row + 1, column=clo)
+            # print(cell)
+            if cell.value is None or len(cell.value) == 0:
+                break
+            cell.fill = self.yellow_fill
 
 
 if __name__ == '__main__':

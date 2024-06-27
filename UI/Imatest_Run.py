@@ -19,6 +19,7 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.intiui()
         self.camera_param = 0
         self.final_report_name = ""
+        self.err_flag = 0
 
     def intiui(self):
         self.group.buttonClicked[int].connect(self.on_check_box_clicked)
@@ -70,9 +71,6 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.data["CameraData"]["is_hj_test"] = True if HJ_path_length != 0 else False
         self.data["CameraData"]["is_mix_test"] = True if Mix_path_length != 0 else False
         #
-        # # 保存修改后的内容回 YAML 文件
-        with open(self.yaml_file_path, 'w') as file:
-            yaml.safe_dump(self.data, file)
 
         # 拷贝csv文件到相应的目录
         if HJ_path_length != 0:
@@ -119,22 +117,32 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             else:
                 self.deal_csv_file("Mix", Mix_file_path)
 
-        # 删除已存在的报告
-
-        if self.path_is_existed(self.final_report_name):
-            self.remove_file(self.final_report_name)
-
-        # 显示报告正在生成中
-        self.tips.setText("正在生成报告,请等待.....")
-
-        # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
-        thread = threading.Thread(target=self.run_process)
-        thread.start()
-
         # 检测报告的生成
         self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告.csv" % (self.data["CameraData"]["camera_product"],
                                                                         self.data["CameraData"]["project_name"],
                                                                         int(self.data["CameraData"]["pixels"]))
+
+
+        # 已存在的报告,生成新的
+        if self.path_is_existed(os.path.join(self.project_path, self.final_report_name)):
+            self.err_flag += 1
+            self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告(%d).csv" % (self.data["CameraData"]["camera_product"],
+                                                                          self.data["CameraData"]["project_name"],
+                                                                          int(self.data["CameraData"]["pixels"]),
+                                                                          self.err_flag)
+
+        self.data["CameraData"]["report_err_flag"] = self.err_flag
+        self.data["CameraData"]["report_file_name"] = self.final_report_name
+        # 保存修改后的内容回 YAML 文件
+        with open(self.yaml_file_path, 'w') as file:
+            yaml.safe_dump(self.data, file)
+
+        # 显示报告正在生成中
+        self.tips.setText("正在生成报告,请等待.....")
+        # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
+        thread = threading.Thread(target=self.run_process)
+        thread.start()
+
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.check_report)
 

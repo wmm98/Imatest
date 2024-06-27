@@ -1,11 +1,15 @@
 CameraData:
-  camera_product: EE
+  camera_product: "\u5443\u5443\u5443"
   is_cwf_test: false
   is_d65_test: false
-  is_f_test: true
+  is_f_test: false
   is_hj_test: true
   is_mix_test: false
   is_tl83_test: false
   is_tl84_test: false
-  pixels: 800
-  project_name: FFF
+  pixels: 1600
+  project_name: "\u5443\u5443\u5443\u5443"
+  report_err_flag: 4
+  report_file_name: "\u62DB\u6295\u6807\u89C4\u683C\u53C2\u6570\u786E\u8BA4-\u5443\
+    \u5443\u5443-\u5443\u5443\u5443\u5443-1600\u4E07\u6444\u50CF\u5934-\u6307\u6807\
+    \u6D4B\u8BD5\u62A5\u544A(4).csv"
