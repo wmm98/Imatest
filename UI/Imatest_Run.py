@@ -22,13 +22,12 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.err_flag = 0
 
     def intiui(self):
+        self.standard_group.buttonClicked[int].connect(self.on_check_box_standard_clicked)
         self.group.buttonClicked[int].connect(self.on_check_box_clicked)
         self.F_data_upload_button.clicked.connect(self.upload_F_csv_file)
         self.D65_data_upload_button.clicked.connect(self.upload_D65_csv_file)
         self.TL84_data_upload_button.clicked.connect(self.upload_TL84_csv_file)
-        self.TL83_data_upload_button.clicked.connect(self.upload_TL83_csv_file)
         self.CWF_data_upload_button.clicked.connect(self.upload_CWF_csv_file)
-        self.Mix_data_upload_button.clicked.connect(self.upload_Mix_csv_file)
         self.HJ_data_upload_button.clicked.connect(self.upload_HJ_csv_file)
 
         self.submit_button.clicked.connect(self.handle_submit)
@@ -38,6 +37,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def handle_submit(self):
         # 文本框非空检查
+        if not self.is_quality_device.isChecked() and not self.is_standard_device.isChecked():
+            self.get_message_box("请勾选设备为精品或者标准!!!")
+            return
         if not self.is_800_camera.isChecked() and not self.is_500_camera.isChecked() and not self.is_200_camera.isChecked() \
                 and not self.is_1600_camera.isChecked() and not self.is_1300_camera.isChecked():
             self.get_message_box("请勾选其中一个摄像头参数!!!")
@@ -52,12 +54,11 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         F_path_length = len(self.F_file_path.text())
         D65_path_length = len(self.D65_file_path.text())
         TL84_path_length = len(self.TL84_file_path.text())
-        TL83_path_length = len(self.TL83_file_path.text())
         CWF_path_length = len(self.CWF_file_path.text())
-        Mix_path_length = len(self.Mix_file_path.text())
         HJ_path_length = len(self.HJ_file_path.text())
-        if F_path_length == 0 and D65_path_length == 0 and TL83_path_length == 0 and TL84_path_length == 0 and CWF_path_length == 0 and Mix_path_length == 0 and HJ_path_length == 0:
+        if F_path_length == 0 and D65_path_length == 0 and TL84_path_length == 0 and CWF_path_length == 0 and HJ_path_length == 0:
             self.get_message_box("请上传测试的csv!!!")
+            return
 
         # # 检设备名字，检查check box 属性
         self.data["CameraData"]["pixels"] = self.camera_param
@@ -66,70 +67,43 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.data["CameraData"]["is_f_test"] = True if F_path_length != 0 else False
         self.data["CameraData"]["is_d65_test"] = True if D65_path_length != 0 else False
         self.data["CameraData"]["is_tl84_test"] = True if TL84_path_length != 0 else False
-        self.data["CameraData"]["is_tl83_test"] = True if TL83_path_length != 0 else False
         self.data["CameraData"]["is_cwf_test"] = True if CWF_path_length != 0 else False
         self.data["CameraData"]["is_hj_test"] = True if HJ_path_length != 0 else False
-        self.data["CameraData"]["is_mix_test"] = True if Mix_path_length != 0 else False
-        #
 
         # 拷贝csv文件到相应的目录
         if HJ_path_length != 0:
             HJ_file_path = self.HJ_file_path.text()
-            if not self.check_file_extension_name(HJ_file_path, "灰阶"):
-                return
-            else:
-                self.deal_csv_file("HJ", HJ_file_path)
+            self.deal_csv_file("HJ", HJ_file_path)
+
         if F_path_length != 0:
             f_file_path = self.F_file_path.text()
-            if not self.check_file_extension_name(f_file_path, "F"):
-                return
-            else:
-                self.deal_csv_file("F", f_file_path)
+            self.deal_csv_file("F", f_file_path)
+
         if D65_path_length != 0:
             D65_file_path = self.D65_file_path.text()
-            if not self.check_file_extension_name(D65_file_path, "D65"):
-                return
-            else:
-                self.deal_csv_file("D65", D65_file_path)
-            self.deal_csv_file("D65", self.D65_file_path.text())
+            self.deal_csv_file("D65", D65_file_path)
+
         if TL84_path_length != 0:
             TL84_file_path = self.TL84_file_path.text()
-            if not self.check_file_extension_name(TL84_file_path, "TL84"):
-                return
-            else:
-                self.deal_csv_file("TL84", TL84_file_path)
-        if TL83_path_length != 0:
-            TL83_file_path = self.TL83_file_path.text()
-            if not self.check_file_extension_name(TL83_file_path, "TL83"):
-                return
-            else:
-                self.deal_csv_file("TL83", TL83_file_path)
+            self.deal_csv_file("TL84", TL84_file_path)
+
         if CWF_path_length != 0:
             CWF_file_path = self.CWF_file_path.text()
-            if not self.check_file_extension_name(CWF_file_path, "CWF"):
-                return
-            else:
-                self.deal_csv_file("CWF", CWF_file_path)
-        if Mix_path_length != 0:
-            Mix_file_path = self.Mix_file_path.text()
-            if not self.check_file_extension_name(Mix_file_path, "混"):
-                return
-            else:
-                self.deal_csv_file("Mix", Mix_file_path)
+            self.deal_csv_file("CWF", CWF_file_path)
 
         # 检测报告的生成
-        self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告.csv" % (self.data["CameraData"]["camera_product"],
+        self.final_report_name = "%s-%s-%d万摄像头-指标测试报告.xlsx" % (self.data["CameraData"]["camera_product"],
                                                                         self.data["CameraData"]["project_name"],
                                                                         int(self.data["CameraData"]["pixels"]))
 
         # 已存在的报告,生成新的
         if self.path_is_existed(os.path.join(self.project_path, self.final_report_name)):
             self.err_flag += 1
-            self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告(%d).csv" % (
-            self.data["CameraData"]["camera_product"],
-            self.data["CameraData"]["project_name"],
-            int(self.data["CameraData"]["pixels"]),
-            self.err_flag)
+            self.final_report_name = "%s-%s-%d万摄像头-指标测试报告(%d).xlsx" % (
+                self.data["CameraData"]["camera_product"],
+                self.data["CameraData"]["project_name"],
+                int(self.data["CameraData"]["pixels"]),
+                self.err_flag)
 
         self.data["CameraData"]["report_err_flag"] = self.err_flag
         self.data["CameraData"]["report_file_name"] = self.final_report_name
@@ -202,6 +176,12 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         elif id == 5:
             self.camera_param = 1600
 
+    def on_check_box_standard_clicked(self, id):
+        if id == 1:
+            self.data["CameraData"]["standard"] = False
+        else:
+            self.data["CameraData"]["standard"] = True
+
     def copy_file(self, origin, des):
         shutil.copy(origin, des)
 
@@ -221,56 +201,48 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
     def upload_F_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.F_file_path.setText(file_name)
 
     def upload_D65_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.D65_file_path.setText(file_name)
 
     def upload_TL84_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.TL84_file_path.setText(file_name)
-
-    def upload_TL83_csv_file(self):
-        # 打开文件选择对话框
-        file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
-        if file_name:
-            self.TL83_file_path.setText(file_name)
 
     def upload_CWF_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.CWF_file_path.setText(file_name)
 
     def upload_Mix_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.Mix_file_path.setText(file_name)
 
     def upload_HJ_csv_file(self):
         # 打开文件选择对话框
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(self, "选择文件", "",
-                                                             "All Files (*);;Text Files (*.txt)",
-                                                             options=self.options)
+                                                             "CSV files (*.csv)",
+                                                             options=QtWidgets.QFileDialog.Options())
         if file_name:
             self.HJ_file_path.setText(file_name)
 

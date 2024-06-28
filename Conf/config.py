@@ -81,4 +81,6 @@ class Config:
 
     r_test_project = "测试项目"
     r_camera_p_last_key = "闪光均匀性(暗边)"
+    r_camera_standard = "判定标准（标准）"
+    r_camera_most_standard = "判定标准（精品）"
 

@@ -1,14 +1,13 @@
 CameraData:
-  camera_product: "\u5A01\u51EF"
-  is_cwf_test: true
-  is_d65_test: true
-  is_f_test: true
+  camera_product: www
+  is_cwf_test: false
+  is_d65_test: false
+  is_f_test: false
   is_hj_test: true
-  is_mix_test: true
-  is_tl83_test: true
-  is_tl84_test: true
-  pixels: 200
-  project_name: P9
-  report_err_flag: 2
-  report_file_name: "\u62DB\u6295\u6807\u89C4\u683C\u53C2\u6570\u786E\u8BA4-\u5A01\
-    \u51EF-P9-200\u4E07\u6444\u50CF\u5934-\u6307\u6807\u6D4B\u8BD5\u62A5\u544A(2).csv"
+  is_tl84_test: false
+  pixels: 1300
+  project_name: www
+  report_err_flag: 0
+  report_file_name: "www-www-1300\u4E07\u6444\u50CF\u5934-\u6307\u6807\u6D4B\u8BD5\
+    \u62A5\u544A.xlsx"
+  standard: true

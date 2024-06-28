@@ -27,8 +27,20 @@ class Ui_MainWindow(object):
 
         # 将标签添加到水平布局中
         # 添加checkbox
-        layout = QHBoxLayout()
+        standard_layout = QHBoxLayout()
+        self.is_standard_device = QCheckBox("标准")
+        self.is_quality_device = QCheckBox("精品")
+        standard_layout.addWidget(self.is_standard_device)
+        standard_layout.addWidget(self.is_quality_device)
+        standard_layout.addStretch(1)
+        self.standard_group = QButtonGroup()
+        self.standard_group.addButton(self.is_standard_device, id=1)
+        self.standard_group.addButton(self.is_quality_device, id=2)
+        # 设置按钮组中只能有一个选中
+        self.standard_group.setExclusive(True)
+        self.verticalLayout.addLayout(standard_layout)
 
+        layout = QHBoxLayout()
         self.is_800_camera = QCheckBox("800万")
         self.is_500_camera = QCheckBox("500万")
         self.is_200_camera = QCheckBox("200万")
@@ -104,15 +116,6 @@ class Ui_MainWindow(object):
         layout_TL84_light.addWidget(self.TL84_data_upload_button)
         self.verticalLayout.addLayout(layout_TL84_light)
 
-        self.color_TL83_info = QtWidgets.QLabel("上传TL83光csv：")
-        self.verticalLayout.addWidget(self.color_TL83_info)
-        layout_TL83_light = QHBoxLayout()
-        self.TL83_file_path = QtWidgets.QLineEdit()
-        layout_TL83_light.addWidget(self.TL83_file_path)
-        self.TL83_data_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_TL83_light.addWidget(self.TL83_data_upload_button)
-        self.verticalLayout.addLayout(layout_TL83_light)
-
         self.color_CWF_info = QtWidgets.QLabel("上传CWF光csv：")
         self.verticalLayout.addWidget(self.color_CWF_info)
         layout_CWF_light = QHBoxLayout()
@@ -121,15 +124,6 @@ class Ui_MainWindow(object):
         self.CWF_data_upload_button = QtWidgets.QPushButton("点击上传")
         layout_CWF_light.addWidget(self.CWF_data_upload_button)
         self.verticalLayout.addLayout(layout_CWF_light)
-
-        self.color_Mix_info = QtWidgets.QLabel("上传混光csv：")
-        self.verticalLayout.addWidget(self.color_Mix_info)
-        layout_Mix_light = QHBoxLayout()
-        self.Mix_file_path = QtWidgets.QLineEdit()
-        layout_Mix_light.addWidget(self.Mix_file_path)
-        self.Mix_data_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_Mix_light.addWidget(self.Mix_data_upload_button)
-        self.verticalLayout.addLayout(layout_Mix_light)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)

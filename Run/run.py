@@ -20,7 +20,7 @@ if __name__ == '__main__':
         data = yaml.safe_load(file)
 
     w_r = WriteReport(conf.template_path, conf.sheet_name)
-    w_r.camera_pixels = data["CameraData"]["pixels"]
+    w_r.is_quality = data["CameraData"]["standard"]
 
     w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"],
                             "camera_product": data["CameraData"]["camera_product"]})
@@ -35,13 +35,9 @@ if __name__ == '__main__':
         w_r.write_scenario_data(conf.cwf_data_path, conf.r_CWF_light)
     if data["CameraData"]["is_d65_test"]:
         w_r.write_scenario_data(conf.d65_data_path, conf.r_D65_light)
-    if data["CameraData"]["is_tl83_test"]:
-        w_r.write_scenario_data(conf.tl83_data_path, conf.r_TL83_light)
     if data["CameraData"]["is_tl84_test"]:
         w_r.write_scenario_data(conf.tl84_data_path, conf.r_TL84_light)
-    if data["CameraData"]["is_mix_test"]:
-        w_r.write_scenario_data(conf.mix_data_path, conf.r_mix_light)
 
-    w_r.fill_camera_with_pixels()
+    w_r.fill_camera_with_standard(data["CameraData"]["standard"])
 
     shutil.move(conf.template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

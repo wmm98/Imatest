@@ -45,13 +45,18 @@ class CSVTestData(Interface):
                     or self.remove_space(conf.b_noise) in line or self.remove_space(conf.y_noise) in line:
                 break
         # 取后面六行的最后六个数据
-        balance_err_array = np.array(data[row_num + 19: row_num + 23])[:, 2:]
+        balance_err_array = np.array(data[row_num + 19: row_num + 23])[:, 2:6]
+        Y = [float(y) for y in balance_err_array[:, 0].tolist()]
+        R = [float(r) for r in balance_err_array[:, 1].tolist()]
+        G = [float(g) for g in balance_err_array[:, 2].tolist()]
+        B = [float(b) for b in balance_err_array[:, 3].tolist()]
+
         # 转为float列表
-        err_array = balance_err_array.tolist()
-        float_err_array = [[float(j) for j in i] for i in err_array]
+        # err_array = balance_err_array.tolist()
+        # float_err_array = [[float(j) for j in i] for i in err_array]
         # 返回平均数，即为RGBY,取小数点后两位 "{:.2f}".format()
-        RGBY = [float("{:.2f}".format((sum(e_a) / len(e_a)))) for e_a in float_err_array]
-        return {conf.R: RGBY[0], conf.G: RGBY[1], conf.B: RGBY[2], conf.Y: RGBY[3]}
+        # RGBY = [float("{:.2f}".format((sum(e_a) / len(e_a)))) for e_a in float_err_array]
+        return {conf.R: float("{:.2f}".format((sum(R) / len(R)))), conf.G: float("{:.2f}".format((sum(G) / len(G)))), conf.B: float("{:.2f}".format((sum(B) / len(B)))), conf.Y: float("{:.2f}".format((sum(Y) / len(Y))))}
 
     def get_snr_data(self, data):
         for row in data:
@@ -97,7 +102,7 @@ class CSVTestData(Interface):
         # 前后相减， 获取可读灰阶数
         zone_length = len(zone_data)
         readable_relate = [float("{:.1f}".format(zone_data[r] - zone_data[r + 1])) if r < (zone_length - 1) else float(
-            "{:.1f}".format(zone_data[-1])) for r in range(zone_length)]
+            "{:.1f}".format(zone_data[-1])) for r in range(zone_length)][:-1]
         readable_num = len([i for i in readable_relate if i >= 8])
 
         # 获取对比度

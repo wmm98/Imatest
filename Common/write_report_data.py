@@ -14,7 +14,7 @@ class WriteReport(Interface):
         self.file_path = file_path
         self.sheet_name = sheet_name
         self.red_font = Font(color="FF0000")
-        self.camera_pixels = 0
+        self.is_quality = False
         self.scenario_light = ""
         self.yellow_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')
 
@@ -88,9 +88,8 @@ class WriteReport(Interface):
         twenty_four_cell = sheet.cell(row=position[conf.twenty_four][0], column=position[conf.twenty_four][1])
         twenty_four_cell.value = "%s block： %s" % (conf.twenty_four, str(value[conf.twenty_four]))
 
-        font_list = [[nineteen_cell, value[conf.nineteen]], [twenty_cell, value[conf.twenty]],
-                     [twenty_one_cell, value[conf.twenty_one]], [twenty_two_cell, value[conf.twenty_two]],
-                     [twenty_three_cell, value[conf.twenty_three]], [twenty_four_cell, value[conf.twenty_four]]]
+        # 只比较21和22的数据
+        font_list = [[twenty_one_cell, value[conf.twenty_one]], [twenty_two_cell, value[conf.twenty_two]]]
         self.comparative_white_balance_indicator(font_list)
         wb.save(self.file_path)
         wb.close()
@@ -184,40 +183,60 @@ class WriteReport(Interface):
         wb.close()
 
     def comparative_contrast_indicator(self, cell, value):
-        if value <= 0.75:
-            cell.font = self.red_font
+        if self.is_quality:
+            if value < 0.75:
+                cell.font = self.red_font
+        else:
+            if value < 0.7:
+                cell.font = self.red_font
 
     def comparative_readable_hj_indicator(self, cell, value):
-        if value < 19:
-            cell.font = self.red_font
+        if self.is_quality:
+            if value < 15:
+                cell.font = self.red_font
+        else:
+            if value < 11:
+                cell.font = self.red_font
 
     def comparative_dynamic_range_indicator(self, cell, value):
-        if value <= 5.5:
-            cell.font = self.red_font
+        if self.is_quality:
+            if value < 5.5:
+                cell.font = self.red_font
+        else:
+            if value < 5:
+                cell.font = self.red_font
 
     def comparative_snr_indicator(self, cells):
         # l = [["cell", 0], ["cell", 0]]
         for cell in cells:
-            if cell[1] <= 35:
+            if cell[1] < 35:
                 cell[0].font = self.red_font
 
     def comparative_white_balance_indicator(self, cells):
         for cell in cells:
             if self.scenario_light == conf.r_F_light:
-                if cell[1] >= 0.1:
-                    cell[0].font = self.red_font
-            else:
-                if self.camera_pixels == 200:
-                    if cell[1] >= 0.1:
+                if self.is_quality:
+                    if cell[1] > 0.3:
                         cell[0].font = self.red_font
                 else:
-                    if cell[1] >= 0.08:
+                    if cell[1] > 0.4:
+                        cell[0].font = self.red_font
+            else:
+                if self.is_quality:
+                    if cell[1] > 0.1:
+                        cell[0].font = self.red_font
+                else:
+                    if cell[1] > 0.15:
                         cell[0].font = self.red_font
 
     def comparative_rgby_noise_indicator(self, cells):
         for cell in cells:
-            if cell[1] >= 1:
-                cell[0].font = self.red_font
+            if self.is_quality:
+                if cell[1] > 2:
+                    cell[0].font = self.red_font
+            else:
+                if cell[1] > 3:
+                    cell[0].font = self.red_font
 
     def comparative_saturation_indicator(self, cells):
         E1_cell = cells[conf.E1][0]
@@ -229,20 +248,54 @@ class WriteReport(Interface):
         Sat_cell = cells[conf.Sat][0]
         Sat_value = cells[conf.Sat][1]
 
-        if E1_value >= 10:
-            E1_cell.font = self.red_font
-        if C1_value / 2 >= 10:
-            C1_cell.font = self.red_font
-        if C2_value / 2 >= 10:
-            C2_cell.font = self.red_font
-        if Sat_value < 105 or Sat_value > 120:
-            Sat_cell.font = self.red_font
+        if self.is_quality:
+            if E1_value > 15:
+                E1_cell.font = self.red_font
 
-    def fill_camera_with_pixels(self):
+            if self.scenario_light == conf.r_D65_light:
+                if C1_value / 2 > 10:
+                    C1_cell.font = self.red_font
+
+                if C2_value / 2 > 10:
+                    C2_cell.font = self.red_font
+            else:
+                if C1_value / 2 > 12:
+                    C1_cell.font = self.red_font
+
+                if C2_value / 2 > 12:
+                    C2_cell.font = self.red_font
+
+            if self.scenario_light == conf.r_F_light:
+                if Sat_value < 90 or Sat_value > 125:
+                    Sat_cell.font = self.red_font
+            else:
+                if Sat_value < 100 or Sat_value > 125:
+                    Sat_cell.font = self.red_font
+
+        else:
+            if E1_value > 20:
+                E1_cell.font = self.red_font
+            if C1_value / 2 > 15:
+                C1_cell.font = self.red_font
+            if C2_value / 2 > 15:
+                C2_cell.font = self.red_font
+
+            if self.scenario_light == conf.r_F_light:
+                if Sat_value < 90 or Sat_value > 125:
+                    Sat_cell.font = self.red_font
+            else:
+                if Sat_value < 95 or Sat_value > 135:
+                    Sat_cell.font = self.red_font
+
+    def fill_camera_with_standard(self, standard_param):
         wb = load_workbook(self.file_path)
         sheet = wb[self.sheet_name]
         # 摄像头参数位置
-        first_position = report_position.find_scenario_position_by_keyword("%d万摄像头标准参考值" % self.camera_pixels)
+        # True的话为精品
+        if standard_param:
+            first_position = report_position.find_scenario_position_by_keyword(conf.r_camera_most_standard)
+        else:
+            first_position = report_position.find_scenario_position_by_keyword(conf.r_camera_standard)
 
         last_key_position = report_position.find_scenario_position_by_keyword(conf.r_camera_p_last_key)
 
