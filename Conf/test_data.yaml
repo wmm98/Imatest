@@ -1,13 +1,13 @@
 CameraData:
-  camera_product: www
-  is_cwf_test: false
-  is_d65_test: false
-  is_f_test: false
+  camera_product: CCC
+  is_cwf_test: true
+  is_d65_test: true
+  is_f_test: true
   is_hj_test: true
-  is_tl84_test: false
-  pixels: 1300
-  project_name: www
-  report_err_flag: 0
-  report_file_name: "www-www-1300\u4E07\u6444\u50CF\u5934-\u6307\u6807\u6D4B\u8BD5\
-    \u62A5\u544A.xlsx"
+  is_tl84_test: true
+  pixels: 1600
+  project_name: EEEEE
+  report_err_flag: 4
+  report_file_name: "CCC-EEEEE-1600\u4E07\u6444\u50CF\u5934-\u6307\u6807\u6D4B\u8BD5\
+    \u62A5\u544A(4).xlsx"
   standard: true

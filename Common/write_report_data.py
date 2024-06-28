@@ -271,7 +271,6 @@ class WriteReport(Interface):
             else:
                 if Sat_value < 100 or Sat_value > 125:
                     Sat_cell.font = self.red_font
-
         else:
             if E1_value > 20:
                 E1_cell.font = self.red_font
