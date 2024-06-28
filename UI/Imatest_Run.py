@@ -122,14 +122,14 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
                                                                         self.data["CameraData"]["project_name"],
                                                                         int(self.data["CameraData"]["pixels"]))
 
-
         # 已存在的报告,生成新的
         if self.path_is_existed(os.path.join(self.project_path, self.final_report_name)):
             self.err_flag += 1
-            self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告(%d).csv" % (self.data["CameraData"]["camera_product"],
-                                                                          self.data["CameraData"]["project_name"],
-                                                                          int(self.data["CameraData"]["pixels"]),
-                                                                          self.err_flag)
+            self.final_report_name = "招投标规格参数确认-%s-%s-%d万摄像头-指标测试报告(%d).csv" % (
+            self.data["CameraData"]["camera_product"],
+            self.data["CameraData"]["project_name"],
+            int(self.data["CameraData"]["pixels"]),
+            self.err_flag)
 
         self.data["CameraData"]["report_err_flag"] = self.err_flag
         self.data["CameraData"]["report_file_name"] = self.final_report_name
