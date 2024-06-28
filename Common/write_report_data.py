@@ -243,19 +243,14 @@ class WriteReport(Interface):
         sheet = wb[self.sheet_name]
         # 摄像头参数位置
         first_position = report_position.find_scenario_position_by_keyword("%d万摄像头标准参考值" % self.camera_pixels)
-        print("摄像头参数位置", first_position)
 
         last_key_position = report_position.find_scenario_position_by_keyword(conf.r_camera_p_last_key)
-        print(last_key_position)
 
         for i in range(first_position[0], last_key_position[0] + 1):
-            cel = sheet.cell(row=i,  column=first_position[1])
+            cel = sheet.cell(row=i, column=first_position[1])
             cel.fill = self.yellow_fill
         wb.save(self.file_path)
         wb.close()
-
-
-
 
 
 if __name__ == '__main__':
