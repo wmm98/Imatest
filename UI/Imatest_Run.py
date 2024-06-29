@@ -44,6 +44,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
                 and not self.is_1600_camera.isChecked() and not self.is_1300_camera.isChecked():
             self.get_message_box("请勾选其中一个摄像头参数!!!")
             return
+        if not self.is_f_test.isChecked() and not self.is_hj_test.isChecked() and not self.is_cwf_test.isChecked() and not self.is_d65_test.isChecked() and not self.is_tl84_test.isChecked():
+            self.get_message_box("请选择其中一个测试场景!!!")
+            return
         if len(self.camera_product_edit.text()) == 0:
             # 显示错误消息框
             self.get_message_box("摄像头厂家不能为空,请输入!!!")
@@ -197,6 +200,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             return True
         else:
             return False
+
+    def upload_result_folder(self):
+        pass
 
     def upload_F_csv_file(self):
         # 打开文件选择对话框

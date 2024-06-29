@@ -28,8 +28,10 @@ class Ui_MainWindow(object):
         # 将标签添加到水平布局中
         # 添加checkbox
         standard_layout = QHBoxLayout()
+        self.test_standard = QtWidgets.QLabel("指标：")
         self.is_standard_device = QCheckBox("标准")
         self.is_quality_device = QCheckBox("精品")
+        standard_layout.addWidget(self.test_standard)
         standard_layout.addWidget(self.is_standard_device)
         standard_layout.addWidget(self.is_quality_device)
         standard_layout.addStretch(1)
@@ -41,12 +43,14 @@ class Ui_MainWindow(object):
         self.verticalLayout.addLayout(standard_layout)
 
         layout = QHBoxLayout()
+        self.camera_pixels = QtWidgets.QLabel("像素：")
         self.is_800_camera = QCheckBox("800万")
         self.is_500_camera = QCheckBox("500万")
         self.is_200_camera = QCheckBox("200万")
         self.is_1300_camera = QCheckBox("1300万")
         self.is_1600_camera = QCheckBox("1600万")
 
+        layout.addWidget(self.camera_pixels)
         layout.addWidget(self.is_800_camera)
         layout.addWidget(self.is_500_camera)
         layout.addWidget(self.is_200_camera)
@@ -68,8 +72,26 @@ class Ui_MainWindow(object):
         self.group.setExclusive(True)
         self.verticalLayout.addLayout(layout)
 
+        light_layout = QHBoxLayout()
+        self.test_section = QtWidgets.QLabel("场景：")
+        self.is_hj_test = QCheckBox("灰阶")
+        self.is_f_test = QCheckBox("F")
+        self.is_d65_test = QCheckBox("D65")
+        self.is_cwf_test = QCheckBox("CWF")
+        self.is_tl84_test = QCheckBox("TL84")
+
+        light_layout.addWidget(self.test_section)
+        light_layout.addWidget(self.is_hj_test)
+        light_layout.addWidget(self.is_f_test)
+        light_layout.addWidget(self.is_d65_test)
+        light_layout.addWidget(self.is_cwf_test)
+        light_layout.addWidget(self.is_tl84_test)
+        # 添加一个拉伸因子以将水平布局放在窗口底部
+        light_layout.addStretch(1)
+        self.verticalLayout.addLayout(light_layout)
+
         layout_product = QHBoxLayout()
-        self.camera_product_name = QtWidgets.QLabel("摄像头厂家：")
+        self.camera_product_name = QtWidgets.QLabel("厂家：")
         self.camera_product_edit = QtWidgets.QLineEdit()
         self.project_name = QtWidgets.QLabel("项目名称：")
         self.project_edit = QtWidgets.QLineEdit()
