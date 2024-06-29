@@ -4,6 +4,7 @@ from Conf.config import Config
 from Common.interface import Interface
 from Common.color_data_filter import CSVTestData
 from Common.get_report_position import GetReportPosition
+from datetime import datetime
 
 conf = Config()
 
@@ -178,8 +179,10 @@ class WriteReport(Interface):
         sheet = wb[self.sheet_name]
         position = self.report_position.get_test_project_position(conf.r_test_project)
         r_cell = sheet.cell(row=position[0], column=position[1])
-        r_cell.value = "%s-%s万摄像头(%s)" % (
-            camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"])
+        now = datetime.now()
+        time_info = "%d%d%d" % (now.year, now.month, now.day)
+        r_cell.value = "%s-%s万摄像头(%s)-%s" % (
+            camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"], time_info)
         wb.save(self.file_path)
         wb.close()
 

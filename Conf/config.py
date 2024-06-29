@@ -5,7 +5,7 @@ class Config:
     project_path = os.getcwd()
 
     hj_name = "HJ.csv"
-    f_name = "F.csv"
+    f_name = "A.csv"
     cwf_name = "CWF.csv"
     d65_name = "D65.csv"
     tl83_name = "TL83.csv"
@@ -17,12 +17,12 @@ class Config:
     sheet_name = "指标数据"
 
     hj_data_path = os.path.join(project_path, "TestData", "HJ", hj_name)
-    f_data_path = os.path.join(project_path, "TestData", "F", f_name)
+    f_data_path = os.path.join(project_path, "TestData", "A", f_name)
     cwf_data_path = os.path.join(project_path, "TestData", "CWF", cwf_name)
     d65_data_path = os.path.join(project_path, "TestData", "D65", d65_name)
-    tl83_data_path = os.path.join(project_path, "TestData", "TL83", tl83_name)
+    # tl83_data_path = os.path.join(project_path, "TestData", "TL83", tl83_name)
     tl84_data_path = os.path.join(project_path, "TestData", "TL84", tl84_name)
-    mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
+    # mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
     report_template_base_path = os.path.join(project_path, "ReportTemplate")
     # template_path = os.path.join(report_template_base_path, template_name)
     origin_template_quality_path = os.path.join(report_template_base_path, "Template", template_quality_name)
@@ -74,7 +74,8 @@ class Config:
     r_mix_light = "混光"
     r_D65_light = "6500K"
     r_TL84_light = "4000K"
-    r_F_light = "2700K"
+    # A光
+    r_F_light = "2500K"
     r_CWF_light = "4150K"
     r_TL83_light = "3000K"
 
