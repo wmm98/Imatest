@@ -11,7 +11,9 @@ class Config:
     tl83_name = "TL83.csv"
     tl84_name = "TL84.csv"
     mix_name = "Mix.csv"
-    template_name = "Template.xlsx"
+    # template_name = ""
+    template_quality_name = "Template_Quality.xlsx"
+    template_standard_name = "Template_Standard.xlsx"
     sheet_name = "指标数据"
 
     hj_data_path = os.path.join(project_path, "TestData", "HJ", hj_name)
@@ -22,8 +24,9 @@ class Config:
     tl84_data_path = os.path.join(project_path, "TestData", "TL84", tl84_name)
     mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
     report_template_base_path = os.path.join(project_path, "ReportTemplate")
-    template_path = os.path.join(report_template_base_path, template_name)
-    origin_template_path = os.path.join(report_template_base_path, "Template", template_name)
+    # template_path = os.path.join(report_template_base_path, template_name)
+    origin_template_quality_path = os.path.join(report_template_base_path, "Template", template_quality_name)
+    origin_template_standard_path = os.path.join(report_template_base_path, "Template", template_standard_name)
 
     # 色彩专业名词
     wb_err_s = "WB ERR S(HSV)"
@@ -83,4 +86,6 @@ class Config:
     r_camera_p_last_key = "闪光均匀性(暗边)"
     r_camera_standard = "判定标准（标准）"
     r_camera_most_standard = "判定标准（精品）"
+
+
 

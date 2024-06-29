@@ -6,20 +6,29 @@ if __name__ == '__main__':
     from Common.write_report_data import WriteReport
 
     conf = Config()
-
-    # 复制模板
-    if os.path.exists(conf.template_path):
-        os.remove(conf.template_path)
-    shutil.copy(conf.origin_template_path, conf.report_template_base_path)
-    if not os.path.exists(conf.template_path):
-        shutil.copy(conf.origin_template_path, conf.report_template_base_path)
-
     yaml_file_path = os.path.join(conf.project_path, "Conf", "test_data.yaml")
     # 加载 YAML 文件
     with open(yaml_file_path, 'r', encoding="utf-8") as file:
         data = yaml.safe_load(file)
 
-    w_r = WriteReport(conf.template_path, conf.sheet_name)
+    # 复制模板
+    # 如果是精品
+    template_path = ""  # 定义复制后的模板名称
+    tmp_path = ""
+    if data["CameraData"]["standard"]:
+        template_path = os.path.join(conf.report_template_base_path, conf.template_quality_name)
+        origin_path_path = conf.origin_template_quality_path
+        if os.path.exists(template_path):
+            os.remove(template_path)
+        shutil.copy(conf.origin_template_quality_path, conf.report_template_base_path)
+    else:
+        template_path = os.path.join(conf.report_template_base_path, conf.template_standard_name)
+        origin_path_path = conf.origin_template_standard_path
+        if os.path.exists(template_path):
+            os.remove(template_path)
+        shutil.copy(conf.origin_template_standard_path, conf.report_template_base_path)
+
+    w_r = WriteReport(template_path, template_path, conf.sheet_name)
     w_r.is_quality = data["CameraData"]["standard"]
 
     w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"],
@@ -38,6 +47,6 @@ if __name__ == '__main__':
     if data["CameraData"]["is_tl84_test"]:
         w_r.write_scenario_data(conf.tl84_data_path, conf.r_TL84_light)
 
-    w_r.fill_camera_with_standard(data["CameraData"]["standard"])
+    # w_r.fill_camera_with_standard(data["CameraData"]["standard"])
 
-    shutil.move(conf.template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))
+    shutil.move(template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

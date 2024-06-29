@@ -107,15 +107,6 @@ class Ui_MainWindow(object):
         layout_D65_light.addWidget(self.D65_data_upload_button)
         self.verticalLayout.addLayout(layout_D65_light)
 
-        self.color_TL84_info = QtWidgets.QLabel("上传TL84光csv：")
-        self.verticalLayout.addWidget(self.color_TL84_info)
-        layout_TL84_light = QHBoxLayout()
-        self.TL84_file_path = QtWidgets.QLineEdit()
-        layout_TL84_light.addWidget(self.TL84_file_path)
-        self.TL84_data_upload_button = QtWidgets.QPushButton("点击上传")
-        layout_TL84_light.addWidget(self.TL84_data_upload_button)
-        self.verticalLayout.addLayout(layout_TL84_light)
-
         self.color_CWF_info = QtWidgets.QLabel("上传CWF光csv：")
         self.verticalLayout.addWidget(self.color_CWF_info)
         layout_CWF_light = QHBoxLayout()
@@ -124,6 +115,15 @@ class Ui_MainWindow(object):
         self.CWF_data_upload_button = QtWidgets.QPushButton("点击上传")
         layout_CWF_light.addWidget(self.CWF_data_upload_button)
         self.verticalLayout.addLayout(layout_CWF_light)
+
+        self.color_TL84_info = QtWidgets.QLabel("上传TL84光csv：")
+        self.verticalLayout.addWidget(self.color_TL84_info)
+        layout_TL84_light = QHBoxLayout()
+        self.TL84_file_path = QtWidgets.QLineEdit()
+        layout_TL84_light.addWidget(self.TL84_file_path)
+        self.TL84_data_upload_button = QtWidgets.QPushButton("点击上传")
+        layout_TL84_light.addWidget(self.TL84_data_upload_button)
+        self.verticalLayout.addLayout(layout_TL84_light)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
