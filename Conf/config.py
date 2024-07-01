@@ -4,13 +4,11 @@ import os
 class Config:
     project_path = os.getcwd()
 
-    hj_name = "HJ.csv"
-    f_name = "A.csv"
-    cwf_name = "CWF.csv"
-    d65_name = "D65.csv"
-    tl83_name = "TL83.csv"
-    tl84_name = "TL84.csv"
-    mix_name = "Mix.csv"
+    hj_name = "HJ_summary.csv"
+    f_name = "A_summary.csv"
+    cwf_name = "CWF_summary.csv"
+    d65_name = "D65_summary.csv"
+    tl84_name = "TL84_summary.csv"
     # template_name = ""
     template_quality_name = "Template_Quality.xlsx"
     template_standard_name = "Template_Standard.xlsx"

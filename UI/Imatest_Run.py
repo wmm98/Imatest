@@ -62,27 +62,27 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             self.get_message_box("文件夹路径：%s不存在" % self.folder_path_edit.text().strip())
             return
         if self.is_hj_test.isChecked():
-            self.HJ_path = os.path.join(result_folder_path, "HJ.csv")
+            self.HJ_path = os.path.join(result_folder_path, "HJ_summary.csv")
             if not os.path.exists(self.HJ_path):
                 self.get_message_box("灰阶数据：%s不存在" % self.HJ_path)
                 return
         if self.is_f_test.isChecked():
-            self.F_path = os.path.join(result_folder_path, "A.csv")
+            self.F_path = os.path.join(result_folder_path, "A_summary.csv")
             if not os.path.exists(self.F_path):
                 self.get_message_box("A光数据：%s不存在" % self.F_path)
                 return
         if self.is_d65_test.isChecked():
-            self.D65_path = os.path.join(result_folder_path, "D65.csv")
+            self.D65_path = os.path.join(result_folder_path, "D65_summary.csv")
             if not os.path.exists(self.D65_path):
                 self.get_message_box("D65光数据：%s不存在" % self.D65_path)
                 return
         if self.is_tl84_test.isChecked():
-            self.TL84_path = os.path.join(result_folder_path, "TL84.csv")
+            self.TL84_path = os.path.join(result_folder_path, "TL84_summary.csv")
             if not os.path.exists(self.TL84_path):
                 self.get_message_box("TL84光数据：%s不存在" % self.TL84_path)
                 return
         if self.is_cwf_test.isChecked():
-            self.CWF_path = os.path.join(result_folder_path, "CWF.csv")
+            self.CWF_path = os.path.join(result_folder_path, "CWF_summary.csv")
             if not os.path.exists(self.CWF_path):
                 self.get_message_box("CWF光数据：%s不存在" % self.CWF_path)
                 return
@@ -115,7 +115,15 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
 
         # 检测报告的生成
         now = datetime.now()
-        time_info = "%d%d%d" % (now.year, now.month, now.day)
+        if now.month < 10:
+            month = "0%d" % now.month
+        else:
+            month = now.month
+        if now.day < 10:
+            day = "0%d" % now.day
+        else:
+            day = now.day
+        time_info = "%d%s%s" % (now.year, month, day)
         self.final_report_name = "%s-%d万摄像头(%s)-指标测试报告-%s.xlsx" % (
                                                                         self.data["CameraData"]["project_name"],
                                                                         int(self.data["CameraData"]["pixels"]),
@@ -176,7 +184,7 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         return True
 
     def deal_csv_file(self, light, file_path):
-        csv_name = light + os.path.splitext(file_path)[1]
+        csv_name = light + "_summary" + os.path.splitext(file_path)[1]
         test_data_path = os.path.join(self.project_path, "TestData")
         des_folder = os.path.join(test_data_path, light)
         des_file = os.path.join(des_folder, csv_name)

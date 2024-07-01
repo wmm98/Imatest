@@ -74,7 +74,7 @@ class Ui_MainWindow(object):
 
         light_layout = QHBoxLayout()
         self.test_section = QtWidgets.QLabel("场景：")
-        self.is_hj_test = QCheckBox("灰阶")
+        self.is_hj_test = QCheckBox("HJ(灰阶)")
         self.is_f_test = QCheckBox("A")
         self.is_d65_test = QCheckBox("D65")
         self.is_cwf_test = QCheckBox("CWF")
@@ -89,6 +89,10 @@ class Ui_MainWindow(object):
         # 添加一个拉伸因子以将水平布局放在窗口底部
         light_layout.addStretch(1)
         self.verticalLayout.addLayout(light_layout)
+        # csv命名提示
+        csv_name_tips = QtWidgets.QLabel("csv命名提示：请以 HJ_summary.csv， A_summary.csv， TL84_summary.csv， D65_summary.csv， CWF_summary.csv 命名")
+        csv_name_tips.setStyleSheet("color: blue;")
+        self.verticalLayout.addWidget(csv_name_tips)
 
         layout_product = QHBoxLayout()
         self.camera_product_name = QtWidgets.QLabel("厂家：")

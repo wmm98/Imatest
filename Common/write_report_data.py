@@ -180,7 +180,15 @@ class WriteReport(Interface):
         position = self.report_position.get_test_project_position(conf.r_test_project)
         r_cell = sheet.cell(row=position[0], column=position[1])
         now = datetime.now()
-        time_info = "%d%d%d" % (now.year, now.month, now.day)
+        if now.month < 10:
+            month = "0%d" % now.month
+        else:
+            month = now.month
+        if now.day < 10:
+            day = "0%d" % now.day
+        else:
+            day = now.day
+        time_info = "%d%s%s" % (now.year, month, day)
         r_cell.value = "%s-%s万摄像头(%s)-%s" % (
             camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"], time_info)
         wb.save(self.file_path)

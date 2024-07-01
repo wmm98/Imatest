@@ -56,7 +56,8 @@ class CSVTestData(Interface):
         # float_err_array = [[float(j) for j in i] for i in err_array]
         # 返回平均数，即为RGBY,取小数点后两位 "{:.2f}".format()
         # RGBY = [float("{:.2f}".format((sum(e_a) / len(e_a)))) for e_a in float_err_array]
-        return {conf.R: float("{:.2f}".format((sum(R) / len(R)))), conf.G: float("{:.2f}".format((sum(G) / len(G)))), conf.B: float("{:.2f}".format((sum(B) / len(B)))), conf.Y: float("{:.2f}".format((sum(Y) / len(Y))))}
+        return {conf.R: float("{:.2f}".format((sum(R) / len(R)))), conf.G: float("{:.2f}".format((sum(G) / len(G)))),
+                conf.B: float("{:.2f}".format((sum(B) / len(B)))), conf.Y: float("{:.2f}".format((sum(Y) / len(Y))))}
 
     def get_snr_data(self, data):
         for row in data:
@@ -96,7 +97,7 @@ class CSVTestData(Interface):
             if self.remove_space(conf.hj_relate_key) in [self.remove_space(i) for i in row]:
                 break
         # 取第二列数据
-        relate_data = np.array(data)[row_num: row_num + 20, 1]
+        relate_data = np.array(data[row_num: row_num + 20])[:, 1]
         zone_data = [float(i) for i in relate_data.tolist()]
 
         # 前后相减， 获取可读灰阶数
