@@ -25,7 +25,7 @@ class WriteReport(Interface):
         sheet = wb[self.sheet_name]
         pos = position[conf.r_hj_relate_pos]
         contrast_cell = sheet.cell(row=pos[0], column=pos[1])
-        contrast_cell.value = "%s%%" % str(value[conf.hj_contrast] * 100)
+        contrast_cell.value = "%s%%" % str(float("{:.4f}".format(value[conf.hj_contrast])) * 100)
 
         self.comparative_contrast_indicator(contrast_cell, value[conf.hj_contrast])
         wb.save(self.file_path)
@@ -126,7 +126,7 @@ class WriteReport(Interface):
         c2_cell = sheet.cell(row=position[conf.C2][0], column=position[conf.C2][1])
         c2_cell.value = "△C2：%s" % str(value[conf.C2])
         sat_cell = sheet.cell(row=position[conf.Sat][0], column=position[conf.Sat][1])
-        sat_cell.value = "Sat：%s%%" % str(value[conf.Sat])
+        sat_cell.value = "Sat：%s%%" % str("{:.1f}".format(value[conf.Sat]))
 
         font_data = {conf.E1: [e1_cell, value[conf.E1]], conf.C1: [c1_cell, value[conf.C1]],
                      conf.C2: [c2_cell, value[conf.C2]], conf.Sat: [sat_cell, value[conf.Sat]]}

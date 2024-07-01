@@ -91,7 +91,6 @@ class CSVTestData(Interface):
         return accuracy_data
 
     def get_HJ_contrast_and_readable_data(self, data):
-        # print(data)
         row_num = 0
         # start row
         for row in data:
@@ -108,7 +107,6 @@ class CSVTestData(Interface):
                         elem.startswith('-') and elem[1:].replace('.', '', 1).isdigit()):
                     flag += 1
             if flag == len(end_row):
-                print(end_row)
                 end_row_num += 1
             else:
                 break
