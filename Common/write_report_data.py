@@ -25,7 +25,7 @@ class WriteReport(Interface):
         sheet = wb[self.sheet_name]
         pos = position[conf.r_hj_relate_pos]
         contrast_cell = sheet.cell(row=pos[0], column=pos[1])
-        contrast_cell.value = "%s%%" % str(float("{:.4f}".format(value[conf.hj_contrast])) * 100)
+        contrast_cell.value = "%s%%" % ("{:.2f}".format(value[conf.hj_contrast] * 100))
 
         self.comparative_contrast_indicator(contrast_cell, value[conf.hj_contrast])
         wb.save(self.file_path)
@@ -128,8 +128,8 @@ class WriteReport(Interface):
         sat_cell = sheet.cell(row=position[conf.Sat][0], column=position[conf.Sat][1])
         sat_cell.value = "Sat：%s%%" % str("{:.1f}".format(value[conf.Sat]))
 
-        font_data = {conf.E1: [e1_cell, value[conf.E1]], conf.C1: [c1_cell, value[conf.C1]],
-                     conf.C2: [c2_cell, value[conf.C2]], conf.Sat: [sat_cell, value[conf.Sat]]}
+        font_data = {conf.E1: [e1_cell, value[conf.E1]], conf.C1: [c1_cell, float(value[conf.C1])],
+                     conf.C2: [c2_cell, float(value[conf.C2])], conf.Sat: [sat_cell, float(value[conf.Sat])]}
         self.comparative_saturation_indicator(font_data)
         wb.save(self.file_path)
         wb.close()
@@ -265,16 +265,16 @@ class WriteReport(Interface):
                 E1_cell.font = self.red_font
 
             if self.scenario_light == conf.r_D65_light:
-                if C1_value / 2 > 10:
+                if C1_value > 10:
                     C1_cell.font = self.red_font
 
-                if C2_value / 2 > 10:
+                if C2_value > 10:
                     C2_cell.font = self.red_font
             else:
-                if C1_value / 2 > 12:
+                if C1_value > 12:
                     C1_cell.font = self.red_font
 
-                if C2_value / 2 > 12:
+                if C2_value > 12:
                     C2_cell.font = self.red_font
 
             if self.scenario_light == conf.r_F_light:
@@ -286,9 +286,9 @@ class WriteReport(Interface):
         else:
             if E1_value > 20:
                 E1_cell.font = self.red_font
-            if C1_value / 2 > 15:
+            if C1_value > 15:
                 C1_cell.font = self.red_font
-            if C2_value / 2 > 15:
+            if C2_value > 15:
                 C2_cell.font = self.red_font
 
             if self.scenario_light == conf.r_F_light:
