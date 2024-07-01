@@ -91,13 +91,29 @@ class CSVTestData(Interface):
         return accuracy_data
 
     def get_HJ_contrast_and_readable_data(self, data):
+        # print(data)
         row_num = 0
+        # start row
         for row in data:
             row_num += 1
             if self.remove_space(conf.hj_relate_key) in [self.remove_space(i) for i in row]:
                 break
+        # end row
+        end_row_num = row_num
+        for end_row in data[row_num:]:
+
+            flag = 0
+            for elem in end_row:
+                if elem.isdigit() or (elem.replace('.', '', 1).isdigit()) or (
+                        elem.startswith('-') and elem[1:].replace('.', '', 1).isdigit()):
+                    flag += 1
+            if flag == len(end_row):
+                print(end_row)
+                end_row_num += 1
+            else:
+                break
         # 取第二列数据
-        relate_data = np.array(data[row_num: row_num + 20])[:, 1]
+        relate_data = np.array(data[row_num: end_row_num])[:, 1]
         zone_data = [float(i) for i in relate_data.tolist()]
 
         # 前后相减， 获取可读灰阶数
