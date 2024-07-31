@@ -13,6 +13,7 @@ class Config:
     template_quality_name = "Template_Quality.xlsx"
     template_standard_name = "Template_Standard.xlsx"
     sheet_name = "指标数据"
+    summary_sheet_name = "问题汇总"
 
     hj_data_path = os.path.join(project_path, "TestData", "HJ", hj_name)
     f_data_path = os.path.join(project_path, "TestData", "A", f_name)
@@ -85,6 +86,10 @@ class Config:
     r_camera_p_last_key = "闪光均匀性(暗边)"
     r_camera_standard = "判定标准（标准）"
     r_camera_most_standard = "判定标准（精品）"
+
+    r_summary_que = "序号"
+    r_summary_description = "概要描述"
+    r_summary_detail = "概要描述"
 
 
 

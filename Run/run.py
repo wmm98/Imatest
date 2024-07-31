@@ -33,20 +33,36 @@ if __name__ == '__main__':
 
     w_r.write_project_name({"project_name": data["CameraData"]["project_name"], "pixels": data["CameraData"]["pixels"],
                             "camera_product": data["CameraData"]["camera_product"]})
-    # 灰阶测试数据
-    if data["CameraData"]["is_hj_test"]:
-        w_r.write_hj_data()
     # F
     if data["CameraData"]["is_f_test"]:
         w_r.write_scenario_data(conf.f_data_path, conf.r_F_light)
+        # 处理问题汇总
+        if len(w_r.F_light_description) != 0:
+            w_r.F_light_description.insert(0, "A光")
+            w_r.questions_summary.append(w_r.F_light_description)
     # cwf
     if data["CameraData"]["is_cwf_test"]:
         w_r.write_scenario_data(conf.cwf_data_path, conf.r_CWF_light)
+        if len(w_r.CWF_light_description) != 0:
+            w_r.CWF_light_description.insert(0, "CWF光")
+            w_r.questions_summary.append(w_r.CWF_light_description)
+
     if data["CameraData"]["is_d65_test"]:
         w_r.write_scenario_data(conf.d65_data_path, conf.r_D65_light)
+        if len(w_r.D65_light_description) != 0:
+            w_r.D65_light_description.insert(0, "D65光")
+            w_r.questions_summary.append(w_r.D65_light_description)
+
     if data["CameraData"]["is_tl84_test"]:
         w_r.write_scenario_data(conf.tl84_data_path, conf.r_TL84_light)
+        if len(w_r.TL84_light_description) != 0:
+            w_r.TL84_light_description.insert(0, "TL84光")
+            w_r.questions_summary.append(w_r.TL84_light_description)
 
-    # w_r.fill_camera_with_standard(data["CameraData"]["standard"])
+        # 灰阶测试数据
+        if data["CameraData"]["is_hj_test"]:
+            w_r.write_hj_data()
+            if len(w_r.HJ_light_description) != 0:
+                w_r.questions_summary.append(w_r.HJ_light_description)
 
     shutil.move(template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

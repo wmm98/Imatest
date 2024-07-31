@@ -18,6 +18,13 @@ class WriteReport(Interface):
         self.is_quality = False
         self.scenario_light = ""
         self.yellow_fill = PatternFill(start_color='FFFF00', end_color='FFFF00', fill_type='solid')
+        # 问题总结数据准备
+        self.questions_summary = []
+        self.F_light_description = []
+        self.D65_light_description = []
+        self.CWF_light_description = []
+        self.TL84_light_description = []
+        self.HJ_light_description = []
         self.report_position = GetReportPosition(self.template_path, conf.sheet_name)
 
     def write_contrast_data(self, position, value):
@@ -198,57 +205,124 @@ class WriteReport(Interface):
         if self.is_quality:
             if value < 0.75:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶可读阶数偏低")
         else:
             if value < 0.7:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶可读阶数偏低")
 
     def comparative_readable_hj_indicator(self, cell, value):
         if self.is_quality:
             if value < 15:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶对比度偏低")
         else:
             if value < 11:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶对比度偏低")
 
     def comparative_dynamic_range_indicator(self, cell, value):
         if self.is_quality:
             if value < 5.5:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶图偏低")
         else:
             if value < 5:
                 cell.font = self.red_font
+                self.HJ_light_description.append("灰阶图偏低")
 
     def comparative_snr_indicator(self, cells):
         # l = [["cell", 0], ["cell", 0]]
         for cell in cells:
             if cell[1] < 35:
                 cell[0].font = self.red_font
+                snr_desc = "信噪比偏低"
+                if self.scenario_light == conf.r_F_light:
+                    if snr_desc not in self.F_light_description:
+                        self.F_light_description.append(snr_desc)
+                elif self.scenario_light == conf.r_D65_light:
+                    if snr_desc not in self.D65_light_description:
+                        self.D65_light_description.append(snr_desc)
+                elif self.scenario_light == conf.r_CWF_light:
+                    if snr_desc not in self.CWF_light_description:
+                        self.CWF_light_description.append(snr_desc)
+                else:
+                    if snr_desc not in self.TL84_light_description:
+                        self.TL84_light_description.append(snr_desc)
 
     def comparative_white_balance_indicator(self, cells):
+        white_balance_des = "白平衡不及格"
         for cell in cells:
             if self.scenario_light == conf.r_F_light:
                 if self.is_quality:
                     if cell[1] > 0.3:
                         cell[0].font = self.red_font
+                        if white_balance_des not in self.F_light_description:
+                            self.F_light_description.append(white_balance_des)
                 else:
                     if cell[1] > 0.4:
                         cell[0].font = self.red_font
+                        if white_balance_des not in self.F_light_description:
+                            self.F_light_description.append(white_balance_des)
             else:
                 if self.is_quality:
                     if cell[1] > 0.1:
                         cell[0].font = self.red_font
+                        if self.scenario_light == conf.r_D65_light:
+                            if white_balance_des not in self.D65_light_description:
+                                self.D65_light_description.append(white_balance_des)
+                        elif self.scenario_light == conf.r_CWF_light:
+                            if white_balance_des not in self.CWF_light_description:
+                                self.CWF_light_description.append(white_balance_des)
+                        else:
+                            if white_balance_des not in self.TL84_light_description:
+                                self.TL84_light_description.append(white_balance_des)
                 else:
                     if cell[1] > 0.15:
                         cell[0].font = self.red_font
+                        if self.scenario_light == conf.r_D65_light:
+                            if white_balance_des not in self.D65_light_description:
+                                self.D65_light_description.append(white_balance_des)
+                        elif self.scenario_light == conf.r_CWF_light:
+                            if white_balance_des not in self.CWF_light_description:
+                                self.CWF_light_description.append(white_balance_des)
+                        else:
+                            if white_balance_des not in self.TL84_light_description:
+                                self.TL84_light_description.append(white_balance_des)
 
     def comparative_rgby_noise_indicator(self, cells):
+        rgby_noise_des = "噪点偏高"
         for cell in cells:
             if self.is_quality:
                 if cell[1] > 2:
                     cell[0].font = self.red_font
+                    if self.scenario_light == conf.r_F_light:
+                        if rgby_noise_des not in self.F_light_description:
+                            self.F_light_description.append(rgby_noise_des)
+                    elif self.scenario_light == conf.r_D65_light:
+                        if rgby_noise_des not in self.D65_light_description:
+                            self.D65_light_description.append(rgby_noise_des)
+                    elif self.scenario_light == conf.r_CWF_light:
+                        if rgby_noise_des not in self.CWF_light_description:
+                            self.CWF_light_description.append(rgby_noise_des)
+                    else:
+                        if rgby_noise_des not in self.TL84_light_description:
+                            self.TL84_light_description.append(rgby_noise_des)
             else:
                 if cell[1] > 3:
                     cell[0].font = self.red_font
+                    if self.scenario_light == conf.r_F_light:
+                        if rgby_noise_des not in self.F_light_description:
+                            self.F_light_description.append(rgby_noise_des)
+                    elif self.scenario_light == conf.r_D65_light:
+                        if rgby_noise_des not in self.D65_light_description:
+                            self.D65_light_description.append(rgby_noise_des)
+                    elif self.scenario_light == conf.r_CWF_light:
+                        if rgby_noise_des not in self.CWF_light_description:
+                            self.CWF_light_description.append(rgby_noise_des)
+                    else:
+                        if rgby_noise_des not in self.TL84_light_description:
+                            self.TL84_light_description.append(rgby_noise_des)
 
     def comparative_saturation_indicator(self, cells):
         E1_cell = cells[conf.E1][0]
@@ -259,44 +333,71 @@ class WriteReport(Interface):
         C2_value = cells[conf.C2][1]
         Sat_cell = cells[conf.Sat][0]
         Sat_value = cells[conf.Sat][1]
-
+        saturation_des = "颜色还原/饱和度测试不合格"
+        flag = 0
         if self.is_quality:
             if E1_value > 15:
                 E1_cell.font = self.red_font
+                flag += 1
 
             if self.scenario_light == conf.r_D65_light:
                 if C1_value > 10:
                     C1_cell.font = self.red_font
+                    flag += 1
 
                 if C2_value > 10:
                     C2_cell.font = self.red_font
+                    flag += 1
             else:
                 if C1_value > 12:
                     C1_cell.font = self.red_font
+                    flag += 1
 
                 if C2_value > 12:
                     C2_cell.font = self.red_font
+                    flag += 1
 
             if self.scenario_light == conf.r_F_light:
                 if Sat_value < 90 or Sat_value > 125:
                     Sat_cell.font = self.red_font
+                    flag += 1
             else:
                 if Sat_value < 100 or Sat_value > 125:
                     Sat_cell.font = self.red_font
+                    flag += 1
         else:
             if E1_value > 20:
                 E1_cell.font = self.red_font
+                flag += 1
             if C1_value > 15:
                 C1_cell.font = self.red_font
+                flag += 1
             if C2_value > 15:
                 C2_cell.font = self.red_font
+                flag += 1
 
             if self.scenario_light == conf.r_F_light:
                 if Sat_value < 90 or Sat_value > 125:
                     Sat_cell.font = self.red_font
+                    flag += 1
             else:
                 if Sat_value < 95 or Sat_value > 135:
                     Sat_cell.font = self.red_font
+                    flag += 1
+
+        if flag > 0:
+            if self.scenario_light == conf.r_F_light:
+                if saturation_des not in self.F_light_description:
+                    self.F_light_description.append(saturation_des)
+            elif self.scenario_light == conf.r_D65_light:
+                if saturation_des not in self.D65_light_description:
+                    self.D65_light_description.append(saturation_des)
+            elif self.scenario_light == conf.r_CWF_light:
+                if saturation_des not in self.CWF_light_description:
+                    self.CWF_light_description.append(saturation_des)
+            else:
+                if saturation_des not in self.TL84_light_description:
+                    self.TL84_light_description.append(saturation_des)
 
     def fill_camera_with_standard(self, standard_param):
         wb = load_workbook(self.file_path)
