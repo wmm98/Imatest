@@ -5,6 +5,7 @@ from Common.interface import Interface
 from Common.color_data_filter import CSVTestData
 from Common.get_report_position import GetReportPosition
 from datetime import datetime
+from openpyxl.styles import Alignment, Border, Side
 
 conf = Config()
 
@@ -26,6 +27,51 @@ class WriteReport(Interface):
         self.TL84_light_description = []
         self.HJ_light_description = []
         self.report_position = GetReportPosition(self.template_path, conf.sheet_name)
+
+    def get_border(self):
+        # 创建一个细边框样式
+        thin_border = Border(left=Side(style='thin'),
+                             right=Side(style='thin'),
+                             top=Side(style='thin'),
+                             bottom=Side(style='thin'))
+        return thin_border
+
+    def write_questions_summary_data(self):
+        wb = load_workbook(self.file_path)
+        sheet = wb[conf.summary_sheet_name]
+        # 写入总结
+        # 找到位置
+        if len(self.questions_summary) != 0:
+            key_position = GetReportPosition(self.template_path, conf.summary_sheet_name).find_scenario_position_by_keyword(conf.r_summary_description)
+            for i in range(1, len(self.questions_summary) + 1):
+                if len(self.questions_summary[i - 1]) != 0:
+                    queue_pos_row = key_position[0] + i
+                    queue_pos_clo = key_position[0] - 1
+                    summary_pos_row = key_position[0] + i
+                    summary_pos_clo = key_position[1]
+                    detail_pos_row = key_position[0] + i
+                    detail_pos_clo = key_position[0] + 1
+
+                    queue_cell = sheet.cell(row=queue_pos_row, column=queue_pos_clo)
+                    summary_cell = sheet.cell(row=summary_pos_row, column=summary_pos_clo)
+                    detail_cell = sheet.cell(row=detail_pos_row, column=detail_pos_clo)
+
+                    # 设置行高
+                    sheet.row_dimensions[queue_pos_row].height = 30  # 设置行高为30个单位
+                    queue_cell.value = i
+                    queue_cell.alignment = Alignment(horizontal='center', vertical='center')
+                    summary_cell.value = self.questions_summary[i - 1][0] + "，".join(self.questions_summary[i - 1][1:])
+                    detail_cell.value = self.questions_summary[i - 1][0] + "，".join(self.questions_summary[i - 1][1:])
+
+                    # 给cell 加上边框
+                    # 最后一列, 给表格加上边框
+                    last_clo = key_position[1] + 6
+                    for c in range(key_position[1] - 1, last_clo + 1):
+                        e_cell = sheet.cell(row=queue_pos_row, column=c)
+                        e_cell.border = self.get_border()
+
+        wb.save(self.file_path)
+        wb.close()
 
     def write_contrast_data(self, position, value):
         wb = load_workbook(self.file_path)

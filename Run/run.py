@@ -65,4 +65,7 @@ if __name__ == '__main__':
             if len(w_r.HJ_light_description) != 0:
                 w_r.questions_summary.append(w_r.HJ_light_description)
 
+    # 写入问题汇总
+    w_r.write_questions_summary_data()
+
     shutil.move(template_path, os.path.join(conf.project_path, data["CameraData"]["report_file_name"]))

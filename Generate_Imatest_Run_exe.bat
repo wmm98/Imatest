@@ -40,7 +40,7 @@ if exist "%FILE_NAME%" del /q "%FILE_NAME%"
 if exist "%EXE_NAME%" del /q "%EXE_NAME%"
 
 REM ::打包exe文件
-poetry run pyinstaller %PYTHON_SCRIPT%
+poetry run pyinstaller --noconsole %PYTHON_SCRIPT%
 REM
 echo copy file operation！！！
 ::拷贝文件夹，文件到当前目录下
