@@ -69,6 +69,9 @@ class WriteReport(Interface):
                     for c in range(key_position[1] - 1, last_clo + 1):
                         e_cell = sheet.cell(row=queue_pos_row, column=c)
                         e_cell.border = self.get_border()
+                        # 第一列不用设置，上面已经设置好
+                        if c != key_position[1] - 1:
+                            e_cell.alignment = Alignment(vertical='center')
 
         wb.save(self.file_path)
         wb.close()
