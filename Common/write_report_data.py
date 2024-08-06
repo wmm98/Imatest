@@ -42,7 +42,9 @@ class WriteReport(Interface):
         # 写入总结
         # 找到位置
         if len(self.questions_summary) != 0:
-            key_position = GetReportPosition(self.template_path, conf.summary_sheet_name).find_scenario_position_by_keyword(conf.r_summary_description)
+            key_position = GetReportPosition(self.template_path,
+                                             conf.summary_sheet_name).find_scenario_position_by_keyword(
+                conf.r_summary_description)
             for i in range(1, len(self.questions_summary) + 1):
                 if len(self.questions_summary[i - 1]) != 0:
                     queue_pos_row = key_position[0] + i
@@ -187,6 +189,111 @@ class WriteReport(Interface):
         font_data = {conf.E1: [e1_cell, value[conf.E1]], conf.C1: [c1_cell, float(value[conf.C1])],
                      conf.C2: [c2_cell, float(value[conf.C2])], conf.Sat: [sat_cell, float(value[conf.Sat])]}
         self.comparative_saturation_indicator(font_data)
+        wb.save(self.file_path)
+        wb.close()
+
+    def get_jxl_data(self, data):
+        if data["team"] == 1:
+            # 1室
+            if data["pixels"] == 100:
+                if self.is_quality:
+                    return {"center": 650, "edge": 550}
+                else:
+                    return {"center": 600, "edge": 500}
+            elif data["pixels"] == 200:
+                if self.is_quality:
+                    return {"center": 850, "edge": 650}
+                else:
+                    return {"center": 800, "edge": 600}
+            elif data["pixels"] == 300:
+                if self.is_quality:
+                    return {"center": 1000, "edge": 850}
+                else:
+                    return {"center": 950, "edge": 800}
+            elif data["pixels"] == 500:
+                if self.is_quality:
+                    return {"center": 1400, "edge": 1100}
+                else:
+                    return {"center": 1200, "edge": 1000}
+            elif data["pixels"] == 800:
+                if self.is_quality:
+                    return {"center": 1600, "edge": 1400}
+                else:
+                    return {"center": 1500, "edge": 1200}
+        else:
+            # 2室
+            if data["pixels"] == 200:
+                if self.is_quality:
+                    return {"center": 800, "edge": 600}
+                else:
+                    return {"center": 660, "edge": 450}
+            elif data["pixels"] == 500:
+                if self.is_quality:
+                    return {"center": 1100, "edge": 900}
+                else:
+                    return {"center": 1070, "edge": 880}
+            elif data["pixels"] == 800:
+                if self.is_quality:
+                    return {"center": 1500, "edge": 1200}
+                else:
+                    return {"center": 1350, "edge": 1100}
+            elif data["pixels"] == 1300:
+                if self.is_quality:
+                    return {"center": 1900, "edge": 1400}
+                else:
+                    return {"center": 1740, "edge": 1420}
+            elif data["pixels"] == 1600:
+                if self.is_quality:
+                    return {"center": 2100, "edge": 1600}
+                else:
+                    return {"center": 1920, "edge": 1570}
+
+    def write_jxl_data(self, data):
+        wb = load_workbook(self.file_path)
+        sheet = wb[self.sheet_name]
+        # 获取指标数据
+        indicator = self.get_jxl_data(data)
+        # 先获取对焦成功率,先写指标数据
+        focus_key_pos = self.report_position.find_scenario_position_by_keyword(conf.r_jxl_focus)
+        if data["team"] == 1:
+            # 写入指标数据
+            center_position = [focus_key_pos[0] + 2, focus_key_pos[1] + 1]
+            edge_position = [focus_key_pos[0] + 2, focus_key_pos[1] + 2]
+            center_cell = sheet.cell(row=center_position[0], column=center_position[1])
+            edge_cell = sheet.cell(row=edge_position[0], column=edge_position[1])
+            center_cell.value = ">=%dLW/PH" % indicator["center"]
+            center_cell.alignment = Alignment(horizontal='center', vertical='center')
+            edge_cell.value = ">=%dLW/PH" % indicator["edge"]
+            edge_cell.alignment = Alignment(horizontal='center', vertical='center')
+            # 写入中央四周数据
+            csv = CSVTestData(conf.jxl_data_path)
+            jxl_data = csv.get_resolution_data(csv.read_csv_to_matrix())
+            # 列表数据顺序和报告顺序一样为： 中央垂直、水平， 左上垂直、水平， 左下垂直、水平，右上垂直、水平， 右下垂直、水平
+            test_distance_pos = self.report_position.find_scenario_position_by_keyword(conf.r_test_distance)
+            flag = 1
+            for j in jxl_data:
+                j_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] + flag)
+                j_cell.value = j
+                flag += 1
+            # 写入四周最小值和最大值
+            edge_data = jxl_data[2:]
+            min_edge_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] + flag)
+            max_edge_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] + flag + 1)
+            min_edge_cell.value = min(edge_data)
+            max_edge_cell.value = max(edge_data)
+
+        else:
+            # 只写入指标数据
+            for i in range(4):
+                center_position = [focus_key_pos[0] + 2 + i, focus_key_pos[1] + 1]
+                edge_position = [focus_key_pos[0] + 2 + i, focus_key_pos[1] + 2]
+                center_cell = sheet.cell(row=center_position[0], column=center_position[1])
+                edge_cell = sheet.cell(row=edge_position[0], column=edge_position[1])
+                center_cell.value = ">=%dLW/PH" % indicator["center"]
+                center_cell.alignment = Alignment(horizontal='center', vertical='center')
+                edge_cell.value = ">=%dLW/PH" % indicator["edge"]
+                edge_cell.alignment = Alignment(horizontal='center', vertical='center')
+
         wb.save(self.file_path)
         wb.close()
 

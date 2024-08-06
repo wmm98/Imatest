@@ -9,6 +9,7 @@ class Config:
     cwf_name = "CWF_summary.csv"
     d65_name = "D65_summary.csv"
     tl84_name = "TL84_summary.csv"
+    jxl_name = "JXL_Y_multi.csv"
     # template_name = ""
     template_quality_name = "Template_Quality.xlsx"
     template_standard_name = "Template_Standard.xlsx"
@@ -21,6 +22,7 @@ class Config:
     d65_data_path = os.path.join(project_path, "TestData", "D65", d65_name)
     # tl83_data_path = os.path.join(project_path, "TestData", "TL83", tl83_name)
     tl84_data_path = os.path.join(project_path, "TestData", "TL84", tl84_name)
+    jxl_data_path = os.path.join(project_path, "TestData", "JXL", jxl_name)
     # mix_data_path = os.path.join(project_path, "TestData", "Mix", mix_name)
     report_template_base_path = os.path.join(project_path, "ReportTemplate")
     # template_path = os.path.join(report_template_base_path, template_name)
@@ -34,6 +36,9 @@ class Config:
     g_noise = "R-noise%"
     b_noise = "B-noise%"
     snr_bw = "SNR_BW"
+    # 解析力关键字
+    # Primary
+    jxl_key = "Primary results"
 
     # 色彩偏差关键字
     Sat_key = "Mean camera chroma %"
@@ -87,9 +92,14 @@ class Config:
     r_camera_standard = "判定标准（标准）"
     r_camera_most_standard = "判定标准（精品）"
 
+    # 问题汇总
     r_summary_que = "序号"
     r_summary_description = "概要描述"
     r_summary_detail = "概要描述"
+
+    # 解析力
+    r_jxl_focus = "对焦成功率"
+    r_test_distance = "测试距离"
 
 
 

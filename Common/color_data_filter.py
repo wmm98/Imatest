@@ -21,6 +21,17 @@ class CSVTestData(Interface):
         clear_data.insert(0, title)
         return clear_data
 
+    def get_resolution_data(self, data):
+        # 取最后一排色卡的的六个数据,19-14
+        row_num = 0
+        for row in data:
+            row_num += 1
+            if self.remove_space(conf.jxl_key) in [self.remove_space(i) for i in row]:
+                break
+        # 取后面10行的第2列数据
+        re_data = np.array(data[row_num + 1: row_num + 10 + 1])[:, 1]
+        return [float(i) for i in re_data.tolist()]
+
     def get_white_balance_err_data(self, data):
         # 取最后一排色卡的的六个数据,19-14
         row_num = 0

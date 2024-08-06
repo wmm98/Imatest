@@ -39,12 +39,18 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             self.get_message_box("请勾选设备为精品或者标准！！！")
             return
         if not self.is_800_camera.isChecked() and not self.is_500_camera.isChecked() and not self.is_200_camera.isChecked() \
-                and not self.is_1600_camera.isChecked() and not self.is_1300_camera.isChecked():
+                and not self.is_1600_camera.isChecked() and not self.is_1300_camera.isChecked() and not self.is_100_camera.isChecked():
             self.get_message_box("请勾选摄像头像素！！！")
             return
-        if not self.is_f_test.isChecked() and not self.is_hj_test.isChecked() and not self.is_cwf_test.isChecked() and not self.is_d65_test.isChecked() and not self.is_tl84_test.isChecked():
+        if not self.is_f_test.isChecked() and not self.is_hj_test.isChecked() and not self.is_cwf_test.isChecked() and not self.is_d65_test.isChecked() and not self.is_tl84_test.isChecked()\
+                and not self.is_jxl_test.isChecked():
             self.get_message_box("请勾选测试场景！！！")
             return
+
+        if not self.is_team_two.isChecked() and not self.is_team_one.isChecked():
+            self.get_message_box("请勾选分类！！！")
+            return
+
         if len(self.camera_product_edit.text()) == 0:
             # 显示错误消息框
             self.get_message_box("摄像头厂家不能为空,请输入！！！")
@@ -86,6 +92,10 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             if not os.path.exists(self.CWF_path):
                 self.get_message_box("CWF光数据：%s不存在" % self.CWF_path)
                 return
+        if self.is_jxl_test.isChecked():
+            self.JXL_path = os.path.join(result_folder_path, "JXL_Y_multi.csv")
+            if not os.path.join(self.JXL_path):
+                self.get_message_box("解析力数据：%s不存在" % self.JXL_path)
 
         # # 检设备名字，检查check box 属性
         self.data["CameraData"]["pixels"] = self.camera_param
@@ -96,6 +106,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         self.data["CameraData"]["is_tl84_test"] = self.is_tl84_test.isChecked()
         self.data["CameraData"]["is_cwf_test"] = self.is_cwf_test.isChecked()
         self.data["CameraData"]["is_hj_test"] = self.is_hj_test.isChecked()
+        self.data["CameraData"]["is_jxl_test"] = self.is_jxl_test.isChecked()
+        self.data["CameraData"]["is_team_one"] = self.is_team_one.isChecked()
+        self.data["CameraData"]["is_team_two"] = self.is_team_two.isChecked()
 
         # 拷贝csv文件到相应的目录
         if self.is_hj_test.isChecked():
@@ -112,6 +125,9 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
 
         if self.is_cwf_test.isChecked():
             self.deal_csv_file("CWF", self.CWF_path)
+
+        if self.is_jxl_test.isChecked():
+            self.deal_csv_file("JXL", self.JXL_path)
 
         # 检测报告的生成
         now = datetime.now()
@@ -184,11 +200,18 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         return True
 
     def deal_csv_file(self, light, file_path):
-        csv_name = light + "_summary" + os.path.splitext(file_path)[1]
+        if light == "JXL":
+            csv_name = light + "_Y_multi" + os.path.splitext(file_path)[1]
+            print(csv_name)
+        else:
+            csv_name = light + "_summary" + os.path.splitext(file_path)[1]
         test_data_path = os.path.join(self.project_path, "TestData")
         des_folder = os.path.join(test_data_path, light)
+        print(des_folder)
         des_file = os.path.join(des_folder, csv_name)
+        print(des_file)
         file_copied_path = os.path.join(des_folder, os.path.basename(file_path))
+        print(file_copied_path)
         self.remove_file(des_file)
         self.remove_file(des_file)
         self.copy_file(file_path, des_folder)
@@ -208,6 +231,8 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
             self.camera_param = 1300
         elif id == 5:
             self.camera_param = 1600
+        elif id == 6:
+            self.camera_param = 100
 
     def on_check_box_standard_clicked(self, id):
         if id == 1:

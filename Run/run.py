@@ -59,11 +59,20 @@ if __name__ == '__main__':
             w_r.TL84_light_description.insert(0, "TL84光")
             w_r.questions_summary.append(w_r.TL84_light_description)
 
-        # 灰阶测试数据
-        if data["CameraData"]["is_hj_test"]:
-            w_r.write_hj_data()
-            if len(w_r.HJ_light_description) != 0:
-                w_r.questions_summary.append(w_r.HJ_light_description)
+    # 灰阶测试数据
+    if data["CameraData"]["is_hj_test"]:
+        w_r.write_hj_data()
+        if len(w_r.HJ_light_description) != 0:
+            w_r.questions_summary.append(w_r.HJ_light_description)
+
+    # 解像力数据,测试一室需要写解像力，二室不用
+    if data["CameraData"]["is_team_one"]:
+        team = 1
+    else:
+        team = 2
+    jxl_data = {"team": team, "pixels": data["CameraData"]["pixels"]}
+    if data["CameraData"]["is_jxl_test"]:
+        w_r.write_jxl_data(jxl_data)
 
     # 写入问题汇总
     w_r.write_questions_summary_data()

@@ -44,16 +44,18 @@ class Ui_MainWindow(object):
 
         layout = QHBoxLayout()
         self.camera_pixels = QtWidgets.QLabel("像素：")
-        self.is_800_camera = QCheckBox("800万")
-        self.is_500_camera = QCheckBox("500万")
+        self.is_100_camera = QCheckBox("100万")
         self.is_200_camera = QCheckBox("200万")
+        self.is_500_camera = QCheckBox("500万")
+        self.is_800_camera = QCheckBox("800万")
         self.is_1300_camera = QCheckBox("1300万")
         self.is_1600_camera = QCheckBox("1600万")
 
         layout.addWidget(self.camera_pixels)
-        layout.addWidget(self.is_800_camera)
-        layout.addWidget(self.is_500_camera)
+        layout.addWidget(self.is_100_camera)
         layout.addWidget(self.is_200_camera)
+        layout.addWidget(self.is_500_camera)
+        layout.addWidget(self.is_800_camera)
         layout.addWidget(self.is_1300_camera)
         layout.addWidget(self.is_1600_camera)
         # 添加一个拉伸因子以将水平布局放在窗口底部
@@ -67,6 +69,7 @@ class Ui_MainWindow(object):
         self.group.addButton(self.is_200_camera, id=3)
         self.group.addButton(self.is_1300_camera, id=4)
         self.group.addButton(self.is_1600_camera, id=5)
+        self.group.addButton(self.is_100_camera, id=6)
 
         # 设置按钮组中只能有一个选中
         self.group.setExclusive(True)
@@ -79,6 +82,7 @@ class Ui_MainWindow(object):
         self.is_d65_test = QCheckBox("D65")
         self.is_cwf_test = QCheckBox("CWF")
         self.is_tl84_test = QCheckBox("TL84")
+        self.is_jxl_test = QCheckBox("JXL(解析力)")
 
         light_layout.addWidget(self.test_section)
         light_layout.addWidget(self.is_hj_test)
@@ -86,13 +90,32 @@ class Ui_MainWindow(object):
         light_layout.addWidget(self.is_d65_test)
         light_layout.addWidget(self.is_cwf_test)
         light_layout.addWidget(self.is_tl84_test)
+        light_layout.addWidget(self.is_jxl_test)
         # 添加一个拉伸因子以将水平布局放在窗口底部
         light_layout.addStretch(1)
         self.verticalLayout.addLayout(light_layout)
         # csv命名提示
-        csv_name_tips = QtWidgets.QLabel("csv命名提示：请以 HJ_summary.csv， A_summary.csv， TL84_summary.csv， D65_summary.csv， CWF_summary.csv 命名")
+        csv_name_tips = QtWidgets.QLabel("csv命名提示：请以 HJ_summary.csv， A_summary.csv， TL84_summary.csv， D65_summary.csv， CWF_summary.csv，JXL_Y_multi.csv命名")
         csv_name_tips.setStyleSheet("color: blue;")
         self.verticalLayout.addWidget(csv_name_tips)
+        jxl_tips = QtWidgets.QLabel("解析力请按照以下顺序框选：中央垂直、水平，左上垂直、水平，左下垂直、水平，右上垂直、水平，右下垂直、水平")
+        jxl_tips.setStyleSheet("color: blue;")
+        self.verticalLayout.addWidget(jxl_tips)
+        self.verticalLayout.addWidget(QtWidgets.QLabel())
+
+        layout_type = QHBoxLayout()
+        self.type_label = QtWidgets.QLabel("分类：")
+        self.is_team_one = QCheckBox("测试一室")
+        self.is_team_two = QCheckBox("测试二室")
+        layout_type.addWidget(self.type_label)
+        layout_type.addWidget(self.is_team_one)
+        layout_type.addWidget(self.is_team_two)
+        layout_type.addStretch(1)
+        self.type_group = QButtonGroup()
+        self.type_group.addButton(self.is_team_one, id=1)
+        self.type_group.addButton(self.is_team_two, id=2)
+        self.verticalLayout.addLayout(layout_type)
+        self.verticalLayout.addWidget(QtWidgets.QLabel())
 
         layout_product = QHBoxLayout()
         self.camera_product_name = QtWidgets.QLabel("厂家：")
@@ -104,6 +127,7 @@ class Ui_MainWindow(object):
         layout_product.addWidget(self.project_name)
         layout_product.addWidget(self.project_edit)
         self.verticalLayout.addLayout(layout_product)
+        self.verticalLayout.addWidget(QtWidgets.QLabel())
 
         self.result_folder_info = QtWidgets.QLabel("上传Imatest生成的result文件夹：")
         self.verticalLayout.addWidget(self.result_folder_info)
@@ -113,6 +137,7 @@ class Ui_MainWindow(object):
         self.folder_upload_button = QtWidgets.QPushButton("点击上传")
         layout_upload_folder.addWidget(self.folder_upload_button)
         self.verticalLayout.addLayout(layout_upload_folder)
+        self.verticalLayout.addWidget(QtWidgets.QLabel())
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
