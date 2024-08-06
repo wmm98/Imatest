@@ -26,6 +26,7 @@ class WriteReport(Interface):
         self.CWF_light_description = []
         self.TL84_light_description = []
         self.HJ_light_description = []
+        self.JXL_light_description = []
         self.report_position = GetReportPosition(self.template_path, conf.sheet_name)
 
     def get_border(self):
@@ -274,6 +275,16 @@ class WriteReport(Interface):
             for j in jxl_data:
                 j_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] + flag)
                 j_cell.value = j
+                if flag <= 2:
+                    if j < indicator["center"]:
+                        j_cell.font = self.red_font
+                        if "中央测试数据不及格" not in self.JXL_light_description:
+                            self.JXL_light_description.append("中央测试数据不及格")
+                else:
+                    if j < indicator["edge"]:
+                        j_cell.font = self.red_font
+                        if "四周测试数据不及格" not in self.JXL_light_description:
+                            self.JXL_light_description.append("四周测试数据不及格")
                 flag += 1
             # 写入四周最小值和最大值
             edge_data = jxl_data[2:]

@@ -202,16 +202,12 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
     def deal_csv_file(self, light, file_path):
         if light == "JXL":
             csv_name = light + "_Y_multi" + os.path.splitext(file_path)[1]
-            print(csv_name)
         else:
             csv_name = light + "_summary" + os.path.splitext(file_path)[1]
         test_data_path = os.path.join(self.project_path, "TestData")
         des_folder = os.path.join(test_data_path, light)
-        print(des_folder)
         des_file = os.path.join(des_folder, csv_name)
-        print(des_file)
         file_copied_path = os.path.join(des_folder, os.path.basename(file_path))
-        print(file_copied_path)
         self.remove_file(des_file)
         self.remove_file(des_file)
         self.copy_file(file_path, des_folder)
