@@ -3,12 +3,11 @@ import subprocess
 import sys
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt, QTimer, QRunnable, QThreadPool
+from PyQt5.QtCore import Qt, QTimer, QProcess
 from Tree_Widget import Ui_MainWindow
 import yaml
 import os
 import shutil
-import threading
 from datetime import datetime
 
 
@@ -163,8 +162,8 @@ class tree(QtWidgets.QMainWindow, Ui_MainWindow):
         # 显示报告正在生成中
         self.tips.setText("正在生成报告,请等待.....")
         # 单独线程运行,避免阻塞主线程和 PyQt5 的事件
-        thread = threading.Thread(target=self.run_process)
-        thread.start()
+        self.qt_process = QProcess()
+        self.qt_process.start(os.path.join(self.project_path, "Run", "bat_run.bat"))
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.check_report)
