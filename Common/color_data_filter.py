@@ -22,7 +22,6 @@ class CSVTestData(Interface):
         return clear_data
 
     def get_resolution_data(self, data):
-        # 取最后一排色卡的的六个数据,19-14
         row_num = 0
         for row in data:
             row_num += 1
