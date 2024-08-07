@@ -71,11 +71,11 @@ if __name__ == '__main__':
     else:
         team = 2
     jxl_data = {"team": team, "pixels": data["CameraData"]["pixels"], "project_name": data["CameraData"]["project_name"], "camera_product": data["CameraData"]["camera_product"]}
-    if data["CameraData"]["is_jxl_test"]:
-        w_r.write_jxl_data(jxl_data)
-        if len(w_r.JXL_light_description) != 0:
-            w_r.JXL_light_description.insert(0, "解析力")
-            w_r.questions_summary.append(w_r.JXL_light_description)
+    # if data["CameraData"]["is_jxl_test"]:
+    w_r.write_jxl_data(jxl_data)
+    if len(w_r.JXL_light_description) != 0:
+        w_r.JXL_light_description.insert(0, "解析力")
+        w_r.questions_summary.append(w_r.JXL_light_description)
 
     # 写入问题汇总
     w_r.write_questions_summary_data()
