@@ -70,7 +70,7 @@ if __name__ == '__main__':
         team = 1
     else:
         team = 2
-    jxl_data = {"team": team, "pixels": data["CameraData"]["pixels"]}
+    jxl_data = {"team": team, "pixels": data["CameraData"]["pixels"], "project_name": data["CameraData"]["project_name"], "camera_product": data["CameraData"]["camera_product"]}
     if data["CameraData"]["is_jxl_test"]:
         w_r.write_jxl_data(jxl_data)
         if len(w_r.JXL_light_description) != 0:

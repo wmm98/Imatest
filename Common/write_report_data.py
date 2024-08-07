@@ -256,6 +256,7 @@ class WriteReport(Interface):
         indicator = self.get_jxl_data(data)
         # 先获取对焦成功率,先写指标数据
         focus_key_pos = self.report_position.find_scenario_position_by_keyword(conf.r_jxl_focus)
+        test_distance_pos = self.report_position.find_scenario_position_by_keyword(conf.r_test_distance)
         if data["team"] == 1:
             # 写入指标数据
             center_position = [focus_key_pos[0] + 2, focus_key_pos[1] + 1]
@@ -270,7 +271,6 @@ class WriteReport(Interface):
             csv = CSVTestData(conf.jxl_data_path)
             jxl_data = csv.get_resolution_data(csv.read_csv_to_matrix())
             # 列表数据顺序和报告顺序一样为： 中央垂直、水平， 左上垂直、水平， 左下垂直、水平，右上垂直、水平， 右下垂直、水平
-            test_distance_pos = self.report_position.find_scenario_position_by_keyword(conf.r_test_distance)
             flag = 1
             for j in jxl_data:
                 j_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] + flag)
@@ -304,6 +304,16 @@ class WriteReport(Interface):
                 center_cell.alignment = Alignment(horizontal='center', vertical='center')
                 edge_cell.value = ">=%dLW/PH" % indicator["edge"]
                 edge_cell.alignment = Alignment(horizontal='center', vertical='center')
+
+        # 写入参考标准
+        refer_standard_cell = sheet.cell(row=focus_key_pos[0], column=focus_key_pos[1] + 1)
+        refer_standard_cell.value = "%d万摄像头参考标准" % data["pixels"]
+
+        # 写入测试日期和样品序号
+        test_date_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] - 2)
+        test_date_cell.value = int(self.time_info)
+        product_ser_cell = sheet.cell(row=test_distance_pos[0] + 2, column=test_distance_pos[1] - 1)
+        product_ser_cell.value = "%s %d %s摄像头" % (data["project_name"], data["pixels"], data["camera_product"])
 
         wb.save(self.file_path)
         wb.close()
@@ -362,9 +372,9 @@ class WriteReport(Interface):
             day = "0%d" % now.day
         else:
             day = now.day
-        time_info = "%d%s%s" % (now.year, month, day)
+        self.time_info = "%d%s%s" % (now.year, month, day)
         r_cell.value = "%s-%s万摄像头(%s)-%s" % (
-            camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"], time_info)
+            camera_data["project_name"], str(camera_data["pixels"]), camera_data["camera_product"], self.time_info)
         wb.save(self.file_path)
         wb.close()
 
